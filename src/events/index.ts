@@ -1,0 +1,1 @@
+export { onMessage } from "./message";

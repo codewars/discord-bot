@@ -1,0 +1,12 @@
+.DS_Store
+logs
+*.log
+npm-debug.log*
+
+.vscode
+!.vscode/tasks.js
+.idea/
+
+.npm
+node_modules/
+lib/
