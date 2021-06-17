@@ -6,7 +6,7 @@
   "author": "kazk",
   "license": "MIT",
   "engines": {
-    "node": ">= 14.16 <15"
+    "node": ">= 12"
   },
   "main": "./lib/main.js",
   "scripts": {
