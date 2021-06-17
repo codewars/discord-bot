@@ -11,20 +11,24 @@
   "main": "./lib/main.js",
   "scripts": {
     "start": "node ./lib/main.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "clean": "rimraf lib",
     "prepare": "npm run build",
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.23",
     "@types/node": "^14.14.45",
     "@types/ws": "^7.4.4",
+    "jest": "^27.0.4",
     "prettier": "^2.3.0",
     "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.3",
     "typescript": "^4.3.2"
   },
   "dependencies": {
-    "discord-command-parser": "^1.5.3",
     "discord.js": "^12.5.3",
     "tslib": "^2.2.0"
   }
