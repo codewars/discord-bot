@@ -1,4 +1,6 @@
 import { Message } from "discord.js";
+// reexport for convenience
+export { Message };
 
 // Argument validation should happen in each command with common helper functions.
 // On error, commands can post a help message that's deleted after some time.
@@ -6,7 +8,7 @@ import { Message } from "discord.js";
 export type Command = (
   message: Message,
   args: CommandArg[],
-  options: Record<string, string>
+  opts: Record<string, string>
 ) => Promise<void>;
 
 export type CommandArg = string | CodeBlock | DiscordObject;

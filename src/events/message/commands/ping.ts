@@ -1,8 +1,6 @@
-import { Command } from "./types";
+import { Message } from "./types";
 
 // ping takes no args
-const ping: Command = async (message) => {
+export default async (message: Message) => {
   await message.reply("pong");
 };
-
-export default ping;
