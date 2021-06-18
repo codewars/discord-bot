@@ -8,11 +8,12 @@ export const test: Predicate = (message) => PATTERN.test(message.content);
 
 export const action: Action = (message) => {
   const trainerLinks = message.content.match(PATTERN);
-  if (!trainerLinks) return;
+  if (!trainerLinks) return false;
 
   // TODO Add some message
   const links = trainerLinks
     .map((s) => "- <" + s.replace(/\/train\/[a-z]+$/, "") + ">")
     .join("\n");
   message.reply(links);
+  return true;
 };

@@ -25,8 +25,7 @@ export const onMessage = (message: Message) => {
   // Other handlers, only the first match is applied
   for (const handler of handlers) {
     if (handler.test(message)) {
-      handler.action(message);
-      return;
+      if (handler.action(message)) return;
     }
   }
 };
