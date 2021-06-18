@@ -9,6 +9,13 @@ The official Discord bot for Codewars.
 
 Designing a minimal and modular API. **Not ready** for contribution.
 
+## Configuration
+
+The following environment variables are used:
+
+- `BOT_TOKEN` (required): The token used to log in.
+- `COMMAND_PREFIX`: The prefix used to identify commands. Defaults to `?`.
+
 ## TODO
 
 - [ ] Finalize the initial design
