@@ -36,6 +36,17 @@
     "discord.js": "^12.5.3",
     "tslib": "^2.2.0"
   },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]s$"
+  },
   "prettier": {
     "printWidth": 100
   }
