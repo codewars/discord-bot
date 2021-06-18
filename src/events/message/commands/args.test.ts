@@ -71,9 +71,7 @@ describe("parse", () => {
 
   describe("Discord objects", () => {
     it("user", () => {
-      expect(
-        parse("<@000000000000000000> and <@!0000000000000000001>")
-      ).toEqual({
+      expect(parse("<@000000000000000000> and <@!0000000000000000001>")).toEqual({
         options: {},
         args: [
           { type: "user", id: "000000000000000000" },
@@ -84,9 +82,7 @@ describe("parse", () => {
     });
 
     it("role", () => {
-      expect(
-        parse("<@&000000000000000002> to <@!0000000000000000001>")
-      ).toEqual({
+      expect(parse("<@&000000000000000002> to <@!0000000000000000001>")).toEqual({
         options: {},
         args: [
           { type: "role", id: "000000000000000002" },
