@@ -1,6 +1,6 @@
 import { stripIndents } from "common-tags";
 
-import { Message, CommandArg } from "./types";
+import { Message, CommandArg } from "../types";
 
 export default async (message: Message, args: CommandArg[], opts: Record<string, string>) => {
   await message.channel.send("received the following:\n" + output(args, opts));
