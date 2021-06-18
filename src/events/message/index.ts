@@ -22,10 +22,8 @@ export const onMessage = (message: Message) => {
     }
   }
 
-  // Other handlers, only the first match is applied
-  for (const handler of handlers) {
-    if (handler.test(message)) {
-      if (handler.action(message)) return;
-    }
+  // Other handlers. Stops when a handler returns true.
+  for (const action of handlers) {
+    if (action(message)) return;
   }
 };

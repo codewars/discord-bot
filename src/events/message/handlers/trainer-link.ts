@@ -1,12 +1,10 @@
-// Detect direct links to trainer and show adjusted links with some message.
-import { Action, Predicate } from "./types";
+import { Message } from "discord.js";
 
 const PATTERN =
   /https?:\/\/(www\.)?codewars.com\/kata\/[0-9a-f]{24}\/train\/[a-z]+/g;
 
-export const test: Predicate = (message) => PATTERN.test(message.content);
-
-export const action: Action = (message) => {
+/// Detect direct links to trainer and show adjusted links with some message.
+export default (message: Message) => {
   const trainerLinks = message.content.match(PATTERN);
   if (!trainerLinks) return false;
 

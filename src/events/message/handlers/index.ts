@@ -1,8 +1,13 @@
-import { OnMessage } from "./types";
-import * as trainerLink from "./trainer-link";
+import { Message } from "discord.js";
+
+import trainerLink from "./trainer-link";
+
+// We can expand this later if we need more than stop/continue.
+/// Apply some action to `message`. Return `true` if handled and should stop.
+export type MessageAction = (message: Message) => boolean;
 
 // Reorder this to control precedence.
-const handlers: OnMessage[] = [
+const handlers: MessageAction[] = [
   // Detects trainer link
   trainerLink,
 ];
