@@ -1,7 +1,7 @@
 import { Command } from "./types";
 
 // ping takes no args
-const ping: Command = (message, _args) => {
+const ping: Command = (message) => {
   message.reply("pong");
 };
 

@@ -17,7 +17,8 @@ export const onMessage = (message: Message) => {
     // Run command and finish if known, otherwise ignore.
     if (name && commands.hasOwnProperty(name)) {
       const body = rest.slice(name.length).trimLeft();
-      commands[name](message, parseArguments(body));
+      const { args, options } = parseArguments(body);
+      commands[name](message, args, options);
       return;
     }
   }

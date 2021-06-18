@@ -1,7 +1,14 @@
-import { CommandArgs, CommandArg } from "./types";
+import { CommandArg } from "./types";
 
-export const parse = (body: string): CommandArgs => {
-  const options: { [k: string]: string } = {};
+export type Parsed = {
+  // Key value pairs from flags. `--foo=bar`
+  options: Record<string, string>;
+  // Positional arguments
+  args: CommandArg[];
+};
+
+export const parse = (body: string): Parsed => {
+  const options: Record<string, string> = {};
   const args: CommandArg[] = [];
   let parseFlags = true;
   let str = body.trimLeft();

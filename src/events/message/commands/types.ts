@@ -1,16 +1,13 @@
 import { Message } from "discord.js";
 
-/// A command.
-export type Command = (message: Message, args: CommandArgs) => void;
-
-// Argument validation should happen in each command.
+// Argument validation should happen in each command with common helper functions.
 // On error, commands can post a help message that's deleted after some time.
-export type CommandArgs = {
-  // Key value pairs from flags. `--foo=bar`
-  options: { [k: string]: string };
-  // Positional arguments
-  args: CommandArg[];
-};
+/// A command.
+export type Command = (
+  message: Message,
+  args: CommandArg[],
+  options: Record<string, string>
+) => void;
 
 export type CommandArg = string | CodeBlock | DiscordObject;
 
