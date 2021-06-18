@@ -5,7 +5,6 @@ import handlers from "./handlers";
 
 const PREFIX = process.env.COMMAND_PREFIX || "?";
 
-// TODO Decide how to handle errors
 // `client` can be accessed from `message.client`.
 export const onMessage = async (message: Message) => {
   // Never react to bots
@@ -19,13 +18,23 @@ export const onMessage = async (message: Message) => {
     if (name && commands.hasOwnProperty(name)) {
       const body = rest.slice(name.length).trimLeft();
       const { args, options } = parseArguments(body);
-      await commands[name](message, args, options);
+      // Catch any unexpected error. Each command should handle errors.
+      try {
+        await commands[name](message, args, options);
+      } catch (e) {
+        console.error(e.message);
+      }
       return;
     }
   }
 
   // Other handlers. Stops when a handler returns true.
-  for (const action of handlers) {
-    if (await action(message)) return;
+  // Catch any unexpected error. Each handler should handle errors.
+  try {
+    for (const action of handlers) {
+      if (await action(message)) return;
+    }
+  } catch (e) {
+    console.error(e.message);
   }
 };
