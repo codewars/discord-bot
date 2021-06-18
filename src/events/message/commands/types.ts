@@ -7,7 +7,7 @@ export type Command = (
   message: Message,
   args: CommandArg[],
   options: Record<string, string>
-) => void;
+) => Promise<void>;
 
 export type CommandArg = string | CodeBlock | DiscordObject;
 
