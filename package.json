@@ -14,6 +14,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "clean": "rimraf lib",
+    "plop": "plop",
     "prepare": "npm run build",
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json"
@@ -25,10 +26,12 @@
     "@types/ws": "^7.4.4",
     "husky": "^6.0.0",
     "jest": "^27.0.4",
+    "plop": "^2.7.4",
     "prettier": "^2.3.0",
     "pretty-quick": "^3.1.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.3",
+    "ts-node": "^10.0.0",
     "typescript": "^4.3.2"
   },
   "dependencies": {

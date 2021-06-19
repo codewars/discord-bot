@@ -1,4 +1,4 @@
-# @codewars/discord-bot
+# Codewars Discord Bot
 
 [![Discord chat](https://img.shields.io/discord/846624424199061524.svg?logo=discord&style=flat)](https://discord.gg/7U9t33jrgG)
 [![CI](https://github.com/codewars/discord-bot/workflows/CI/badge.svg)](https://github.com/codewars/discord-bot/actions?query=workflow%3ACI)
@@ -18,8 +18,6 @@ The following environment variables are used:
 
 ## TODO
 
-- [ ] Finalize the initial design
-- [ ] Create bot
 - [ ] CI/CD
 - [ ] Write contribution guides
   - [ ] Adding a new command
