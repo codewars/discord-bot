@@ -25,6 +25,7 @@ export default (plop: NodePlopAPI) => {
         choices: [
           // TODO add more categories as needed
           { name: "Dev", value: "dev" },
+	  { name: "General", value: "general" },
         ],
       },
     ],
