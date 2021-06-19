@@ -36,6 +36,28 @@ npm install
 BOT_TOKEN=.... npm start
 ```
 
+### Making changes
+
+Let TypeScript compile on change:
+
+```bash
+npm run build:watch
+```
+
+and restart the bot.
+
+Run tests automatically on save with:
+
+```bash
+npm run test:watch
+```
+
+Run all tests with:
+
+```bash
+npm run test
+```
+
 ### Adding a new command
 
 Run `npx plop command` to generate boilerplate.
