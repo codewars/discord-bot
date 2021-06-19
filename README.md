@@ -7,7 +7,9 @@ The official Discord bot for Codewars.
 
 ## Project Status
 
-Designing a minimal and modular API. **Not ready** for contribution.
+Early stage. Expect breaking changes.
+
+Feedback is appreciated (Discord or GitHub issues).
 
 ## Configuration
 
@@ -16,10 +18,32 @@ The following environment variables are used:
 - `BOT_TOKEN` (required): The token used to log in.
 - `COMMAND_PREFIX`: The prefix used to identify commands. Defaults to `?`.
 
+## Developement Setup
+
+> NOTE: Please discuss with us first before adding new features to avoid wasting your time.
+
+> TODO Expand
+
+### Install dependencies and build
+
+```bash
+npm install
+```
+
+### Start bot with your token
+
+```bash
+BOT_TOKEN=.... npm start
+```
+
+### Adding a new command
+
+Run `npx plop command` to generate boilerplate.
+
+### Adding a new message handler
+
+Run `npx plop message-handler` to generate boilerplate.
+
 ## TODO
 
-- [ ] CI/CD
 - [ ] Write contribution guides
-  - [ ] Adding a new command
-  - [ ] Testing locally
-  - [ ] Opening a PR
