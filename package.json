@@ -48,7 +48,7 @@
       "ts",
       "js"
     ],
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]s$"
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.ts$"
   },
   "prettier": {
     "printWidth": 100

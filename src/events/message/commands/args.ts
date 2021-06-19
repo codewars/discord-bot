@@ -71,7 +71,7 @@ export const parse = (body: string): Parsed => {
       for (const re of [/^`([^`]+?)`/, /^'([^']+?)'/, /^"([^"]+?)"/]) {
         const match = str.match(re);
         if (match !== null) {
-          args.push(match[1]);
+          args.push({ type: "word", word: match[1] });
           str = str.slice(match[0].length).trimLeft();
           continue mainLoop;
         }
@@ -80,7 +80,7 @@ export const parse = (body: string): Parsed => {
 
     // Space delimited word. Expected to exist because of the loop condition.
     const word = str.match(/^\S+/)![0];
-    args.push(word);
+    args.push({ type: "word", word });
     str = str.slice(word.length).trimLeft();
   }
 

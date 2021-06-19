@@ -11,7 +11,12 @@ export type Command = (
   opts: Record<string, string>
 ) => Promise<void>;
 
-export type CommandArg = string | CodeBlock | DiscordObject;
+export type CommandArg = Word | CodeBlock | DiscordObject;
+
+export type Word = {
+  type: "word";
+  word: string;
+};
 
 export type CodeBlock = {
   type: "code";

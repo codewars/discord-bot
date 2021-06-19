@@ -1,6 +1,7 @@
 import { parse } from "./args";
 
 describe("parse", () => {
+  const word = (word: string) => ({ type: "word", word });
   it("empty", () => {
     expect(parse("")).toEqual({
       options: {},
@@ -11,33 +12,33 @@ describe("parse", () => {
   it("words", () => {
     expect(parse("foo bar buz")).toEqual({
       options: {},
-      args: ["foo", "bar", "buz"],
+      args: ["foo", "bar", "buz"].map(word),
     });
   });
 
   it("double quoted", () => {
     expect(parse('foo "bar baz" "foo bar"')).toEqual({
       options: {},
-      args: ["foo", "bar baz", "foo bar"],
+      args: ["foo", "bar baz", "foo bar"].map(word),
     });
 
     expect(parse(`foo "bar's baz"`)).toEqual({
       options: {},
-      args: ["foo", "bar's baz"],
+      args: ["foo", "bar's baz"].map(word),
     });
   });
 
   it("single quoted", () => {
     expect(parse("foo 'bar baz'")).toEqual({
       options: {},
-      args: ["foo", "bar baz"],
+      args: ["foo", "bar baz"].map(word),
     });
   });
 
   it("backtick", () => {
     expect(parse('foo `"bar baz"`')).toEqual({
       options: {},
-      args: ["foo", '"bar baz"'],
+      args: ["foo", '"bar baz"'].map(word),
     });
   });
 
@@ -45,26 +46,26 @@ describe("parse", () => {
     it("parse flags into options", () => {
       expect(parse("--foo=bar foo bar")).toEqual({
         options: { foo: "bar" },
-        args: ["foo", "bar"],
+        args: ["foo", "bar"].map(word),
       });
 
       expect(parse("--foo foo bar")).toEqual({
         options: { foo: "" },
-        args: ["foo", "bar"],
+        args: ["foo", "bar"].map(word),
       });
     });
 
     it("must use `=` to set value", () => {
       expect(parse("--foo foo bar")).toEqual({
         options: { foo: "" },
-        args: ["foo", "bar"],
+        args: ["foo", "bar"].map(word),
       });
     });
 
     it("flags after -- are arguments", () => {
       expect(parse("--foo=bar -- --a=b foo bar")).toEqual({
         options: { foo: "bar" },
-        args: ["--a=b", "foo", "bar"],
+        args: ["--a=b", "foo", "bar"].map(word),
       });
     });
   });
@@ -75,7 +76,7 @@ describe("parse", () => {
         options: {},
         args: [
           { type: "user", id: "000000000000000000" },
-          "and",
+          word("and"),
           { type: "user", id: "0000000000000000001" },
         ],
       });
@@ -86,7 +87,7 @@ describe("parse", () => {
         options: {},
         args: [
           { type: "role", id: "000000000000000002" },
-          "to",
+          word("to"),
           { type: "user", id: "0000000000000000001" },
         ],
       });
@@ -97,7 +98,7 @@ describe("parse", () => {
         options: {},
         args: [
           { type: "user", id: "000000000000000000" },
-          "to",
+          word("to"),
           { type: "channel", id: "0000000000000000001" },
         ],
       });

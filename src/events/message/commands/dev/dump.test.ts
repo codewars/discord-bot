@@ -1,4 +1,5 @@
 import { stripIndents } from "common-tags";
+import { Word } from "../types";
 
 import { output } from "./dump";
 
@@ -17,10 +18,11 @@ describe("dump output", () => {
   });
 
   it("with args and opts", () => {
-    expect(output(["foo", "bar"], { key: "val" })).toEqual(stripIndents`
+    const word = (word: string): Word => ({ type: "word", word });
+    expect(output(["foo", "bar"].map(word), { key: "val" })).toEqual(stripIndents`
       arguments:
       \`\`\`json
-      ["foo","bar"]
+      [{"type":"word","word":"foo"},{"type":"word","word":"bar"}]
       \`\`\`
       options:
       \`\`\`json
