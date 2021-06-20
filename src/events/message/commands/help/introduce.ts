@@ -32,8 +32,8 @@ export default async (message: Message, args: CommandArg[]) => {
     ? INTRO
     : channel.name === "help-solve"
     ? HELP_SOLVE
-    : channel.name === "off-topic"
-    ? OFF_TOPIC
+    : channel.name === "anything"
+    ? ANYTHING
     : INTRO;
   try {
     const dm = await user.createDM();
@@ -52,7 +52,7 @@ Some channels to help you get started:
 
 - #beginners is for newcomers to programming
 - #codewars is for general Codewars discussion. This is also a great place to introduce yourself as a Codewars user
-- #off-topic is for pretty much anything, whether related to Codewars or not. Kitty pictures are also welcome :-)
+- #anything is for pretty much anything, whether related to Codewars or not. Kitty pictures are also welcome :-)
 - If you need help on solving a Codewars Kata, go to #help-solve
 - There are also a number of language subs for discussing stuff related to a particular programming language, related to Codewars or otherwise. If you do JavaScript, check out #javascript
 
@@ -76,7 +76,7 @@ console.log("Hello World!");
 \`\`\`
 5. The input, output from your solution and expected output`;
 
-const OFF_TOPIC = `Welcome to #off-topic! This channel is for off-topic discussion, so pretty much anything that is appropriate for all ages can be discussed here, whether related to programming or not. However, we ask you to respect a few rules:
+const ANYTHING = `Welcome to #anything! You can discuss pretty much anything that is appropriate for all ages on this channel, whether related to programming or not. However, we ask you to respect a few rules:
 
 - Please adhere to the Codewars Terms of Service (ToS) at all times: <https://www.codewars.com/about/terms-of-service>
 - Please adhere to the Discord Terms of Service (ToS) at all times: <https://discord.com/terms>
