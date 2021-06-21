@@ -1,7 +1,7 @@
-import { Message, CommandArg } from "../types";
-import { Role, TextChannel } from "discord.js";
 import { readFileSync } from "fs";
 import * as path from "path";
+import { Role, TextChannel } from "discord.js";
+import { Message, CommandArg } from "../types";
 
 const isModerator = (role: Role) => role.name === "admin" || role.name === "mods";
 const channels = ["help-solve"];
