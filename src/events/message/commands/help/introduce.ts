@@ -17,7 +17,6 @@ export default async (message: Message, args: CommandArg[]) => {
   // Input validation
   if (args.length !== 2) return;
   const mention = args[0];
-  if (typeof mention !== "object") return;
   if (mention.type !== "user") return;
   const user = message.client.users.cache.get(mention.id);
   if (!user) return;
