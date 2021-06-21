@@ -5,9 +5,9 @@ Welcome to #help-solve! For an optimal experience, please include the following 
 3. What you have tried before asking for help. We'd love to put in the effort to help you, but only if you first help yourself.
 4. Your current solution in properly formatted code blocks. For example:
 
-\`\`\`javascript
-console.log("Hello World!");
-\`\`\`
+\`\`\`javascript  
+console.log("Hello World!");  
+\`\`\`  
 
 gives
 
