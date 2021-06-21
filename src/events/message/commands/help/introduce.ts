@@ -22,7 +22,6 @@ export default async (message: Message, args: CommandArg[]) => {
   const user = message.client.users.cache.get(mention.id);
   if (!user) return;
   const channelMention = args[1];
-  if (typeof channelMention !== "object") return;
   if (channelMention.type !== "channel") return;
   const channel = message.client.channels.cache.get(channelMention.id);
   if (!(channel instanceof TextChannel)) return;
