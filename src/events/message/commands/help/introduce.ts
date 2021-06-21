@@ -1,10 +1,24 @@
 import { Message, CommandArg } from "../types";
 import { Role, TextChannel } from "discord.js";
-import { promises } from "fs";
+import { readFileSync } from "fs";
 import * as path from "path";
 
 const isModerator = (role: Role) => role.name === "admin" || role.name === "mods";
 const channels = ["help-solve"];
+const channelTexts: Map<string, string> = new Map();
+const channelTextsPath = path.join(process.cwd(), "text");
+try {
+  for (const channel of channels)
+    channelTexts.set(
+      channel,
+      readFileSync(path.join(channelTextsPath, `${channel}.md`)).toString()
+    );
+} catch (err) {
+  console.error(
+    `failed to read texts under ${channelTextsPath}: ${err.message || "unknown error"}`
+  );
+  process.exit(1);
+}
 
 // introduce
 export default async (message: Message, args: CommandArg[]) => {
@@ -27,19 +41,15 @@ export default async (message: Message, args: CommandArg[]) => {
   if (!channels.includes(channel.name)) return;
 
   // Action
-  const dmPath = path.join(path.join(process.cwd(), "text"), `${channel.name}.txt`);
-  let reply;
   try {
-    reply = (await promises.readFile(dmPath)).toString();
-  } catch (err) {
-    console.warn(`failed to open file ${dmPath}: ${err.message || "unknown error"}`);
-    return;
-  }
-  try {
+    const reply = channelTexts.get(channel.name);
+    if (!reply) return;
     const dm = await user.createDM();
     await dm.send(reply);
   } catch (err) {
     console.warn(`failed to DM ${user.tag}: ${err.message || "unknown error"}`);
-    await message.channel.send(`<@${mention.id}> ${reply}`);
+    await message.channel.send(
+      `<@${mention.id}>, I couldn't DM you. See <https://github.com/codewars/discord-bot/blob/main/text/${channel.name}.md> instead.`
+    );
   }
 };
