@@ -1,12 +1,11 @@
-import { TextChannel } from "discord.js";
 import { fromModerator, getTexts } from "../../../../common";
 import { Message, CommandArg } from "../types";
 
-const channels = ["help-solve"];
-const USAGE = `Usage: \`?introduce @user #{${channels.join(",")}}\``;
-const channelTexts: Map<string, string> = getTexts("introduce", channels);
+const reasons = ["conduct", "content", "spam"];
+const USAGE = `Usage: \`?warn @user {${reasons.join(",")}}\``;
+const warnTexts: Map<string, string> = getTexts("warn", reasons);
 
-// introduce
+// warn
 export default async (message: Message, args: CommandArg[]) => {
   // Authorization
   if (!fromModerator(message)) return;
@@ -26,30 +25,22 @@ export default async (message: Message, args: CommandArg[]) => {
     console.warn("Could not find the user with ID: " + mention.id);
     return;
   }
-  const channelMention = args[1];
-  if (channelMention.type !== "channel") {
+  const reasonTerm = args[1];
+  if (reasonTerm.type !== "word") {
     message.reply(USAGE);
     return;
   }
-  const channel = message.client.channels.cache.get(channelMention.id);
-  if (!channel) {
-    console.warn("Could not find the channel with ID: " + channelMention.id);
-    return;
-  }
-  if (!(channel instanceof TextChannel)) {
-    message.reply(USAGE);
-    return;
-  }
-  if (!channels.includes(channel.name)) {
+  const reason = reasonTerm.word;
+  if (!reasons.includes(reason)) {
     message.reply(USAGE);
     return;
   }
 
   // Action
   try {
-    const reply = channelTexts.get(channel.name);
+    const reply = warnTexts.get(reason);
     if (!reply) {
-      console.warn("Could not get the text for channel #" + channel.name);
+      console.warn('Could not get the text for reason "' + reason + '"');
       return;
     }
     const dm = await user.createDM();
@@ -57,7 +48,7 @@ export default async (message: Message, args: CommandArg[]) => {
   } catch (err) {
     console.warn(`failed to DM ${user.tag}: ${err.message || "unknown error"}`);
     await message.channel.send(
-      `<@${mention.id}>, I couldn't DM you. See <https://github.com/codewars/discord-bot/blob/main/text/introduce/${channel.name}.md> instead.`
+      `<@${mention.id}>, I couldn't DM you. See <https://github.com/codewars/discord-bot/blob/main/text/warn/${reason}.md> instead.`
     );
   }
 };
