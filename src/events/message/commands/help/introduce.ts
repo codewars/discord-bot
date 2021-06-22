@@ -67,7 +67,7 @@ export default async (message: Message, args: CommandArg[]) => {
   } catch (err) {
     console.warn(`failed to DM ${user.tag}: ${err.message || "unknown error"}`);
     await message.channel.send(
-      `<@${mention.id}>, I couldn't DM you. See <https://github.com/codewars/discord-bot/blob/main/text/${channel.name}.md> instead.`
+      `<@${mention.id}>, I couldn't DM you. See <https://github.com/codewars/discord-bot/blob/main/text/introduce/${channel.name}.md> instead.`
     );
   }
 };
