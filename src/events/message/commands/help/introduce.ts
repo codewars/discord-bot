@@ -1,32 +1,23 @@
 import { readFileSync } from "fs";
 import * as path from "path";
-import { Role, TextChannel } from "discord.js";
+import { TextChannel } from "discord.js";
+import { fromModerator, textPath } from "../../../../common";
 import { Message, CommandArg } from "../types";
 
-const isModerator = (role: Role) => role.name === "admin" || role.name === "mods";
 const channels = ["help-solve"];
 const channelTexts: Map<string, string> = new Map();
-const channelTextsPath = path.join(process.cwd(), "text");
 try {
   for (const channel of channels)
-    channelTexts.set(
-      channel,
-      readFileSync(path.join(channelTextsPath, `${channel}.md`)).toString()
-    );
+    channelTexts.set(channel, readFileSync(path.join(textPath, `${channel}.md`)).toString());
 } catch (err) {
-  console.error(
-    `failed to read texts under ${channelTextsPath}: ${err.message || "unknown error"}`
-  );
+  console.error(`failed to read texts under ${textPath}: ${err.message || "unknown error"}`);
   process.exit(1);
 }
 
 // introduce
 export default async (message: Message, args: CommandArg[]) => {
   // Authorization
-  const author = message.guild?.members.cache.get(message.author.id);
-  if (!author) return;
-  const isPrivileged = author.roles.cache.some(isModerator);
-  if (!isPrivileged) return;
+  if (!fromModerator(message)) return;
 
   // Input validation
   if (args.length !== 2) return;

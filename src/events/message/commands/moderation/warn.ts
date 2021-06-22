@@ -1,10 +1,8 @@
 import { readFileSync } from "fs";
 import * as path from "path";
-import { Role } from "discord.js";
+import { fromModerator, textPath } from "../../../../common";
 import { Message, CommandArg } from "../types";
 
-const isModerator = (role: Role) => role.name === "admin" || role.name === "mods";
-const textPath = path.join(process.cwd(), "text");
 let warnText = "";
 try {
   warnText = readFileSync(path.join(textPath, "warn.md")).toString();
@@ -16,10 +14,7 @@ try {
 // warn
 export default async (message: Message, args: CommandArg[]) => {
   // Authorization
-  const author = message.guild?.members.cache.get(message.author.id);
-  if (!author) return;
-  const isPrivileged = author.roles.cache.some(isModerator);
-  if (!isPrivileged) return;
+  if (!fromModerator(message)) return;
 
   // Input validation
   if (args.length !== 1) return;
