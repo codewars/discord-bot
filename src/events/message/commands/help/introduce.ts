@@ -6,11 +6,12 @@ import { Message, CommandArg } from "../types";
 
 const channels = ["help-solve"];
 const channelTexts: Map<string, string> = new Map();
+const introducePath = path.join(textPath, "introduce");
 try {
   for (const channel of channels)
-    channelTexts.set(channel, readFileSync(path.join(textPath, `${channel}.md`)).toString());
+    channelTexts.set(channel, readFileSync(path.join(introducePath, `${channel}.md`)).toString());
 } catch (err) {
-  console.error(`failed to read texts under ${textPath}: ${err.message || "unknown error"}`);
+  console.error(`failed to read texts under ${introducePath}: ${err.message || "unknown error"}`);
   process.exit(1);
 }
 

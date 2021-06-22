@@ -4,10 +4,11 @@ import { fromModerator, textPath } from "../../../../common";
 import { Message, CommandArg } from "../types";
 
 let warnText = "";
+const warnPath = path.join(textPath, "warn");
 try {
-  warnText = readFileSync(path.join(textPath, "warn.md")).toString();
+  warnText = readFileSync(path.join(warnPath, "warn.md")).toString();
 } catch (err) {
-  console.error(`failed to read texts under ${textPath}: ${err.message || "unknown error"}`);
+  console.error(`failed to read texts under ${warnPath}: ${err.message || "unknown error"}`);
   process.exit(1);
 }
 
