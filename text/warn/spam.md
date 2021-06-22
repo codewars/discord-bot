@@ -1,4 +1,4 @@
-You've violated the following rule:
+You've violated the following rule(s):
 
 - No spam or self-promotion (server invites, advertisements, etc) without permission from @mods. This includes DMing fellow members.
 
