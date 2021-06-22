@@ -5,6 +5,7 @@ import { fromModerator, textPath } from "../../../../common";
 import { Message, CommandArg } from "../types";
 
 const channels = ["help-solve"];
+const USAGE = `Usage: \`?introduce @user #{${channels.join(",")}}\``;
 const channelTexts: Map<string, string> = new Map();
 const introducePath = path.join(textPath, "introduce");
 try {
@@ -21,21 +22,46 @@ export default async (message: Message, args: CommandArg[]) => {
   if (!fromModerator(message)) return;
 
   // Input validation
-  if (args.length !== 2) return;
+  if (args.length !== 2) {
+    message.reply(USAGE);
+    return;
+  }
   const mention = args[0];
-  if (mention.type !== "user") return;
+  if (mention.type !== "user") {
+    message.reply(USAGE);
+    return;
+  }
   const user = message.client.users.cache.get(mention.id);
-  if (!user) return;
+  if (!user) {
+    console.warn("Could not find the user with ID: " + mention.id);
+    return;
+  }
   const channelMention = args[1];
-  if (channelMention.type !== "channel") return;
+  if (channelMention.type !== "channel") {
+    message.reply(USAGE);
+    return;
+  }
   const channel = message.client.channels.cache.get(channelMention.id);
-  if (!(channel instanceof TextChannel)) return;
-  if (!channels.includes(channel.name)) return;
+  if (!channel) {
+    console.warn("Could not find the channel with ID: " + channelMention.id);
+    return;
+  }
+  if (!(channel instanceof TextChannel)) {
+    message.reply(USAGE);
+    return;
+  }
+  if (!channels.includes(channel.name)) {
+    message.reply(USAGE);
+    return;
+  }
 
   // Action
   try {
     const reply = channelTexts.get(channel.name);
-    if (!reply) return;
+    if (!reply) {
+      console.warn("Could not get the text for channel #" + channel.name);
+      return;
+    }
     const dm = await user.createDM();
     await dm.send(reply);
   } catch (err) {
