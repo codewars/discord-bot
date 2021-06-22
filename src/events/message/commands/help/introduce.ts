@@ -1,20 +1,10 @@
-import { readFileSync } from "fs";
-import * as path from "path";
 import { TextChannel } from "discord.js";
-import { fromModerator, textPath } from "../../../../common";
+import { fromModerator, getTexts } from "../../../../common";
 import { Message, CommandArg } from "../types";
 
 const channels = ["help-solve"];
 const USAGE = `Usage: \`?introduce @user #{${channels.join(",")}}\``;
-const channelTexts: Map<string, string> = new Map();
-const introducePath = path.join(textPath, "introduce");
-try {
-  for (const channel of channels)
-    channelTexts.set(channel, readFileSync(path.join(introducePath, `${channel}.md`)).toString());
-} catch (err) {
-  console.error(`failed to read texts under ${introducePath}: ${err.message || "unknown error"}`);
-  process.exit(1);
-}
+const channelTexts: Map<string, string> = getTexts("introduce", channels);
 
 // introduce
 export default async (message: Message, args: CommandArg[]) => {

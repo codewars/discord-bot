@@ -1,19 +1,9 @@
-import { readFileSync } from "fs";
-import * as path from "path";
-import { fromModerator, textPath } from "../../../../common";
+import { fromModerator, getTexts } from "../../../../common";
 import { Message, CommandArg } from "../types";
 
 const reasons = ["conduct", "content", "spam"];
 const USAGE = `Usage: \`?warn @user {${reasons.join(",")}}\``;
-const warnTexts: Map<string, string> = new Map();
-const warnPath = path.join(textPath, "warn");
-try {
-  for (const reason of reasons)
-    warnTexts.set(reason, readFileSync(path.join(warnPath, `${reason}.md`)).toString());
-} catch (err) {
-  console.error(`failed to read texts under ${warnPath}: ${err.message || "unknown error"}`);
-  process.exit(1);
-}
+const warnTexts: Map<string, string> = getTexts("warn", reasons);
 
 // warn
 export default async (message: Message, args: CommandArg[]) => {
