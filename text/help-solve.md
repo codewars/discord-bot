@@ -7,7 +7,7 @@ Welcome to #help-solve! For an optimal experience, please include the following 
 
 \`\`\`javascript  
 console.log("Hello World!");  
-\`\`\`  
+\`\`\`
 
 gives
 
