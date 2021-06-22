@@ -1,0 +1,3 @@
+You are receiving this message because you have been found repeatedly abusing this server for free help on programming exercises, assignments and/or projects unrelated to Codewars or Qualified. While we welcome everyone with open arms and would happily entertain the occasional request for help and guidance on programming outside of Codewars / Qualified, expecting to be spoonfed every single time and draining everyone else's energy is not.
+
+Consider this a formal warning. If you insist on engaging in such behavior, we reserve the right to kick or ban you from the server indefinitely, and your Codewars account (if any) may be restricted.
