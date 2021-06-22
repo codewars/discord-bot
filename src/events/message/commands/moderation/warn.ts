@@ -3,7 +3,7 @@ import * as path from "path";
 import { fromModerator, textPath } from "../../../../common";
 import { Message, CommandArg } from "../types";
 
-const reasons = ["promote", "spoonfeed", "inappropriate"];
+const reasons = ["conduct", "content", "spam"];
 const USAGE = `Usage: \`?warn @user {${reasons.join(",")}}\``;
 const warnTexts: Map<string, string> = new Map();
 const warnPath = path.join(textPath, "warn");
