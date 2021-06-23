@@ -37,12 +37,6 @@ After forking this repo and cloning your fork to your local development environm
 
 After confirming that the bot works as expected, make changes to the local copy of your fork as appropriate and test your changes by restarting the bot.
 
-### Code Style
-
-[Prettier](https://prettier.io/) is used to ensure consistent style. We use the defaults except for `printWidth: 100` because `80` is often too narrow with types.
-
-`pre-commit` hook to format staged changes are installed automatically when you run `npm install`, so you don't need to do anything. However, it's recommended to [configure your editor](https://prettier.io/docs/en/editors.html) to format on save, and forget about formatting.
-
 ### Adding a new command
 
 Run `npx plop command` to generate boilerplate. You will be asked to enter the name of the command (lowercase English letters only) which should be a verb and select an associated category.
@@ -52,6 +46,12 @@ If your command belongs to a category that does not exist yet, stop the command 
 ### Adding a new message handler
 
 Run `npx plop message-handler` to generate boilerplate.
+
+### Code Style
+
+[Prettier](https://prettier.io/) is used to ensure consistent style. We use the defaults except for `printWidth: 100` because `80` is often too narrow with types.
+
+`pre-commit` hook to format staged changes is installed automatically when you run `npm install`, so you don't need to do anything. However, it's recommended to [configure your editor](https://prettier.io/docs/en/editors.html) to format on save, and forget about formatting.
 
 ## License
 
