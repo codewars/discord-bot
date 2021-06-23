@@ -35,10 +35,12 @@ After forking this repo and cloning your fork to your local development environm
 
 After confirming that the bot works as expected, make changes to the local copy of your fork as appropriate and test your changes by restarting the bot.
 
-Before commiting your changes and opening a pull request, make sure your code is properly formatted. Normally there should be a git hook that runs [Prettier](https://www.npmjs.com/package/prettier) on your code automatically on every commit, but if that is not the case, you have two options:
+### Code Style
 
-1. Change directory to the root of this repo and run `$ npm prettier --write .` once before commit, or
-1. Configure your IDE / text editor to automatically invoke Prettier on every save
+[Prettier](https://prettier.io/) is used to ensure consistent style. We use the defaults except for `printWidth: 100` because `80` is often too narrow with types.
+
+Git `pre-commit` hook to format staged changes are installed automatically when you run `npm install`, so you don't need to do anything. However, it's recommended to [configure your editor](https://prettier.io/docs/en/editors.html) to format on save, and forget about formatting.
+
 
 ### Adding a new command
 
