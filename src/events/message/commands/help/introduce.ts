@@ -1,6 +1,7 @@
-import { TextChannel } from "discord.js";
+import { z } from "zod";
+
 import { fromModerator, getTexts } from "../../../../common";
-import { Message, CommandArg } from "../types";
+import { Message, CommandArg, discordUser, discordTextChannel } from "../types";
 
 const channels = ["help-solve"];
 const USAGE = `Usage: \`?introduce @user #{${channels.join(",")}}\``;
@@ -12,38 +13,14 @@ export default async (message: Message, args: CommandArg[]) => {
   if (!fromModerator(message)) return;
 
   // Input validation
-  if (args.length !== 2) {
+  const result = z
+    .tuple([discordUser(message.client), discordTextChannel(message.client)])
+    .safeParse(args);
+  if (!result.success) {
     message.reply(USAGE);
     return;
   }
-  const mention = args[0];
-  if (mention.type !== "user") {
-    message.reply(USAGE);
-    return;
-  }
-  const user = message.client.users.cache.get(mention.id);
-  if (!user) {
-    console.warn("Could not find the user with ID: " + mention.id);
-    return;
-  }
-  const channelMention = args[1];
-  if (channelMention.type !== "channel") {
-    message.reply(USAGE);
-    return;
-  }
-  const channel = message.client.channels.cache.get(channelMention.id);
-  if (!channel) {
-    console.warn("Could not find the channel with ID: " + channelMention.id);
-    return;
-  }
-  if (!(channel instanceof TextChannel)) {
-    message.reply(USAGE);
-    return;
-  }
-  if (!channels.includes(channel.name)) {
-    message.reply(USAGE);
-    return;
-  }
+  const [user, channel] = result.data;
 
   // Action
   try {
@@ -57,7 +34,7 @@ export default async (message: Message, args: CommandArg[]) => {
   } catch (err) {
     console.warn(`failed to DM ${user.tag}: ${err.message || "unknown error"}`);
     await message.channel.send(
-      `<@${mention.id}>, I couldn't DM you. See <https://github.com/codewars/discord-bot/blob/main/text/introduce/${channel.name}.md> instead.`
+      `<@${user.id}>, I couldn't DM you. See <https://github.com/codewars/discord-bot/blob/main/text/introduce/${channel.name}.md> instead.`
     );
   }
 };

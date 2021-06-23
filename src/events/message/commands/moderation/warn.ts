@@ -1,5 +1,6 @@
+import { z } from "zod";
 import { fromModerator, getTexts } from "../../../../common";
-import { Message, CommandArg } from "../types";
+import { Message, CommandArg, discordUser, word } from "../types";
 
 const reasons = ["conduct", "content", "spam"];
 const USAGE = `Usage: \`?warn @user {${reasons.join(",")}}\``;
@@ -11,31 +12,15 @@ export default async (message: Message, args: CommandArg[]) => {
   if (!fromModerator(message)) return;
 
   // Input validation
-  if (args.length !== 2) {
-    message.reply(USAGE);
-    return;
-  }
-  const mention = args[0];
-  if (mention.type !== "user") {
-    message.reply(USAGE);
-    return;
-  }
-  const user = message.client.users.cache.get(mention.id);
-  if (!user) {
-    console.warn("Could not find the user with ID: " + mention.id);
-    return;
-  }
-  const reasonTerm = args[1];
-  if (reasonTerm.type !== "word") {
-    message.reply(USAGE);
-    return;
-  }
-  const reason = reasonTerm.word;
-  if (!reasons.includes(reason)) {
+  const result = z
+    .tuple([discordUser(message.client), word((w) => reasons.includes(w))])
+    .safeParse(args);
+  if (!result.success) {
     message.reply(USAGE);
     return;
   }
 
+  const [user, reason] = result.data;
   // Action
   try {
     const reply = warnTexts.get(reason);
@@ -48,7 +33,7 @@ export default async (message: Message, args: CommandArg[]) => {
   } catch (err) {
     console.warn(`failed to DM ${user.tag}: ${err.message || "unknown error"}`);
     await message.channel.send(
-      `<@${mention.id}>, I couldn't DM you. See <https://github.com/codewars/discord-bot/blob/main/text/warn/${reason}.md> instead.`
+      `<@${user.id}>, I couldn't DM you. See <https://github.com/codewars/discord-bot/blob/main/text/warn/${reason}.md> instead.`
     );
   }
 };
