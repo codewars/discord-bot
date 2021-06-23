@@ -20,52 +20,38 @@ The following environment variables are used:
 
 ## Developement Setup
 
+Before working on this repo, you should already have [set up a bot account](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot) and [added it to your development server](https://discordjs.guide/preparations/adding-your-bot-to-servers.html). In order to mimic the Codewars Discord server in your development server, you may also wish to add appropriate roles such as @admin and @mods, as well as common channels such as #help-solve.
+
 > NOTE: Please discuss with us first before adding new features to avoid wasting your time.
 
 > TODO Expand
 
-### Install dependencies and build
+After forking this repo and cloning your fork to your local development environment:
 
-```bash
-npm install
-```
+1. Change directory to the root of this repo: `$ cd /path/to/your/discord-bot`
+1. Install dependencies: `$ npm install`
+1. Compile the TypeScript source files: `$ npm run build`
+1. Run your bot with [your token](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token): `$ BOT_TOKEN=... npm start`
 
-### Start bot with your token
+After confirming that the bot works as expected, make changes to the local copy of your fork as appropriate and test your changes with the following steps:
 
-```bash
-BOT_TOKEN=.... npm start
-```
+1. Change directory to the root of this repo: `$ cd /path/to/your/discord-bot`
+1. Fix the formatting of your code with Prettier for consistency: `$ npx prettier --write .`
+1. Rebuild the project: `$ npm run build`
+1. Re-run your bot with your token: `$ BOT_TOKEN=... npm start`
 
-### Making changes
-
-Let TypeScript compile on change:
-
-```bash
-npm run build:watch
-```
-
-and restart the bot.
-
-Run tests automatically on save with:
-
-```bash
-npm run test:watch
-```
-
-Run all tests with:
-
-```bash
-npm run test
-```
+To avoid the manual re-formatting step with Prettier, you may wish to configure your text editor or IDE to run the command on every save.
 
 ### Adding a new command
 
-Run `npx plop command` to generate boilerplate.
+Run `npx plop command` to generate boilerplate. You will be asked to enter the name of the command (lowercase English letters only) which should be a verb and select an associated category.
+
+If your command belongs to a category that does not exist yet, stop the command generation by pressing `Ctrl-C`, then modify `plopfile.ts` as appropriate to add your category and re-run `npx plop command`.
 
 ### Adding a new message handler
 
 Run `npx plop message-handler` to generate boilerplate.
 
-## TODO
+## License
 
-- [ ] Write contribution guides
+[MIT](./LICENSE)
