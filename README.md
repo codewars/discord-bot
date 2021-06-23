@@ -30,17 +30,15 @@ After forking this repo and cloning your fork to your local development environm
 
 1. Change directory to the root of this repo: `$ cd /path/to/your/discord-bot`
 1. Install dependencies: `$ npm install`
-1. Compile the TypeScript source files: `$ npm run build`
-1. Run your bot with [your token](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token): `$ BOT_TOKEN=... npm start`
+1. Compile the TypeScript source files and configure it to automatically re-compile on modification: `$ npm run build:watch`
+1. In a new terminal session, run the bot with [your token](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token): `$ BOT_TOKEN=... npm start`
 
-After confirming that the bot works as expected, make changes to the local copy of your fork as appropriate and test your changes with the following steps:
+After confirming that the bot works as expected, make changes to the local copy of your fork as appropriate and test your changes by restarting the bot.
 
-1. Change directory to the root of this repo: `$ cd /path/to/your/discord-bot`
-1. Fix the formatting of your code with Prettier for consistency: `$ npx prettier --write .`
-1. Rebuild the project: `$ npm run build`
-1. Re-run your bot with your token: `$ BOT_TOKEN=... npm start`
+Before commiting your changes and opening a pull request, make sure your code is properly formatted. Normally there should be a git hook that runs [Prettier](https://www.npmjs.com/package/prettier) on your code automatically on every commit, but if that is not the case, you have two options:
 
-To avoid the manual re-formatting step with Prettier, you may wish to configure your text editor or IDE to run the command on every save.
+1. Change directory to the root of this repo and run `$ npm prettier --write .` once before commit, or
+1. Configure your IDE / text editor to automatically invoke Prettier on every save
 
 ### Adding a new command
 
