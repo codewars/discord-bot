@@ -15,7 +15,7 @@
     "test:watch": "jest --watch",
     "clean": "rimraf lib",
     "plop": "plop",
-    "prepare": "npm run build",
+    "prepare": "husky install && npm run build",
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json"
   },
