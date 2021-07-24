@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { fromModerator, getTexts } from "../../../../common";
+import { fromTrustedUser, getTexts } from "../../../../common";
 import { Message, CommandArg, discordUser, discordTextChannel } from "../types";
 
 const channels = ["help-solve"];
@@ -10,7 +10,7 @@ const channelTexts: Map<string, string> = getTexts("introduce", channels);
 // introduce
 export default async (message: Message, args: CommandArg[]) => {
   // Authorization
-  if (!fromModerator(message)) return;
+  if (!fromTrustedUser(message)) return;
 
   // Input validation
   const result = z
