@@ -66,10 +66,17 @@ export const discordUser = (client: Client) =>
     )
     .transform((u) => client.users.cache.get(u.id)!);
 
-export const discordTextChannel = (client: Client) =>
+const anyTextChannel = (_: TextChannel) => true;
+export const discordTextChannel = (
+  client: Client,
+  validator: (tc: TextChannel) => boolean = anyTextChannel
+) =>
   channelTagSchema()
     .refine(
-      (c) => client.channels.cache.get(c.id) instanceof TextChannel,
+      (c) => {
+        const tc = client.channels.cache.get(c.id);
+        return tc instanceof TextChannel && validator(tc);
+      },
       (c) => ({
         message: `Could not find text channel with ID: ${c.id}`,
       })

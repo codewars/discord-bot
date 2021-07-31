@@ -14,7 +14,10 @@ export default async (message: Message, args: CommandArg[]) => {
 
   // Input validation
   const result = z
-    .tuple([discordUser(message.client), discordTextChannel(message.client)])
+    .tuple([
+      discordUser(message.client),
+      discordTextChannel(message.client, (tc) => !!channelTexts.get(tc.name)),
+    ])
     .safeParse(args);
   if (!result.success) {
     message.reply(USAGE);
