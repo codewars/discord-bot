@@ -16,7 +16,7 @@ export default async (message: Message, args: CommandArg[]) => {
   const result = z
     .tuple([
       discordUser(message.client),
-      discordTextChannel(message.client, (tc) => !!channelTexts.get(tc.name)),
+      discordTextChannel(message.client, (tc) => channels.includes(tc.name)),
     ])
     .safeParse(args);
   if (!result.success) {
