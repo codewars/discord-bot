@@ -10,7 +10,7 @@ const LINKS: { [k: string]: string } = {
   authoring: "https://docs.codewars.com/authoring",
   ranking: "https://docs.codewars.com/curation/kata",
   troubleshooting: "https://docs.codewars.com/training/troubleshooting",
-  github: "https://github.com/codewars/codewars.com/issues",
+  github: "https://github.com/codewars/",
 };
 
 const USAGE: string = `Usage: \`?link {${Object.keys(LINKS).join("|")}}\``;
