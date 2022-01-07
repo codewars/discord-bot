@@ -25,5 +25,5 @@ export default async (message: Message, args: CommandArg[]) => {
   const [link] = result.data;
 
   // Respond with link
-  await message.channel.send(`<${LINKS[link]}>`);
+  await message.channel.send(`See <${LINKS[link]}>`);
 };
