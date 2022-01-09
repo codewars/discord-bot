@@ -23,6 +23,7 @@
     "@types/common-tags": "^1.8.0",
     "@types/jest": "^26.0.23",
     "@types/node": "^14.14.45",
+    "@types/node-fetch": "^3.0.3",
     "@types/ws": "^7.4.4",
     "husky": "^6.0.0",
     "jest": "^27.0.4",
