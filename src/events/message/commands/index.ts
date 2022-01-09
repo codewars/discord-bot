@@ -6,6 +6,7 @@ import dump from "./dev/dump";
 import introduce from "./help/introduce";
 import warn from "./moderation/warn";
 import link from "./help/link";
+import rankup from "./fun/rankup";
 
 const commands: { [k: string]: Command } = {
   ping,
@@ -13,5 +14,6 @@ const commands: { [k: string]: Command } = {
   introduce,
   warn,
   link,
+  rankup,
 };
 export default commands;
