@@ -31,23 +31,64 @@ enum Mode {
 const DEFAULTMODE: Mode = Mode.Spread;
 const SPREADWEIGHT: number = 0.6; // used for Spread mode
 
-// Convert synonyms into the names used by CW API
-const LANGSYNONYMS: { [lang: string]: string } = {
-  py: "python",
-  js: "javascript",
-  hs: "haskell",
-  brainfuck: "bf",
-  cs: "coffeescript",
-  "c#": "csharp",
-  ts: "typescript",
-  "c++": "cpp",
-  "f#": "fsharp",
-  objectivec: "objc",
-  "obj-c": "objc",
-  "objective-c": "objc",
-  coldfusionmarkuplanguage: "cfml",
-  coldfusion: "cfml",
-};
+const LANGS = new Set<string>([
+  "agda",
+  "bf",
+  "c",
+  "cfml",
+  "clojure",
+  "cobol",
+  "coffeescript",
+  "commonlisp",
+  "coq",
+  "cpp",
+  "crystal",
+  "csharp",
+  "d",
+  "dart",
+  "elixir",
+  "elm",
+  "erlang",
+  "factor",
+  "forth",
+  "fortran",
+  "fsharp",
+  "go",
+  "groovy",
+  "haskell",
+  "haxe",
+  "idris",
+  "java",
+  "javascript",
+  "julia",
+  "kotlin",
+  "lean",
+  "lua",
+  "nasm",
+  "nim",
+  "objc",
+  "ocaml",
+  "pascal",
+  "perl",
+  "php",
+  "powershell",
+  "prolog",
+  "purescript",
+  "python",
+  "r",
+  "racket",
+  "raku",
+  "reason",
+  "ruby",
+  "rust",
+  "scala",
+  "shell",
+  "solidarity",
+  "sql",
+  "swift",
+  "typescript",
+  "vb",
+]);
 
 // https://docs.codewars.com/gamification/ranks
 // 3-8 dan added speculatively, based on trend
@@ -83,15 +124,13 @@ const RANKPOINTS: { [rank: string]: number } = {
 const capitalise = (s: string): string =>
   s.length ? s[0].toUpperCase() + s.slice(1).toLowerCase() : "";
 
-const getLang = (lang: string): string => LANGSYNONYMS[lang.toLowerCase()] || lang.toLowerCase();
-
 // Retrieve a users language score, or overall score if language is undefined
 const getUserLangScore = async (user: string, lang?: string): Promise<number | undefined> => {
   return await fetch("https://www.codewars.com/api/v1/users/" + user)
     .then((response: any): any => (response.status === 404 ? { success: false } : response.json()))
     .then((result: any): any => {
       if (result.success === false) return;
-      return (lang ? result.ranks.languages[getLang(lang)] : result.ranks.overall)?.score ?? 0;
+      return (lang ? result.ranks.languages[lang] : result.ranks.overall)?.score ?? 0;
     });
 };
 
@@ -115,6 +154,13 @@ export default async (message: Message, args: CommandArg[], opts: Record<string,
   }
   // Get mode
   const mode: Mode = (<any>Mode)[capitalise(String(opts.mode).toLowerCase())] ?? DEFAULTMODE;
+
+  // Check that language exists
+  if (opts.language && !LANGS.has(opts.language))
+    return send(
+      `\`${opts.language}\` is not a valid language ID.
+You can find the correct language ID here: <https://docs.codewars.com/languages/>`
+    );
 
   // Get user data
   const score: number | undefined = await getUserLangScore(username, opts.language);
@@ -180,5 +226,5 @@ export default async (message: Message, args: CommandArg[], opts: Record<string,
 \`\`\`
 ${rankStr}
 \`\`\`
-to ${nextRank}${opts.language ? " in " + getLang(opts.language) : ""}`);
+to ${nextRank}${opts.language ? " in " + opts.language : ""}`);
 };
