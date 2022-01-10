@@ -88,8 +88,8 @@ const getLang = (lang: string): string => LANGSYNONYMS[lang.toLowerCase()] || la
 // Retrieve a users language score, or overall score if language is undefined
 const getUserLangScore = async (user: string, lang?: string): Promise<number | undefined> => {
   return await fetch("https://www.codewars.com/api/v1/users/" + user)
-    .then((response): any => (response.status === 404 ? { success: false } : response.json()))
-    .then((result): any => {
+    .then((response: any): any => (response.status === 404 ? { success: false } : response.json()))
+    .then((result: any): any => {
       if (result.success === false) return;
       return (lang ? result.ranks.languages[getLang(lang)] : result.ranks.overall)?.score ?? 0;
     });
