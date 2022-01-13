@@ -76,13 +76,12 @@ function formatResult(
   lang?: string
 ) {
   const maxLen = Math.max(...ranks.map((v) => String(v[0]).length));
-  const rankStr = ranks
-    .map(([div, rank], i) => {
-      if (div == "0") return "";
-      const prefix = mode === EACH ? (i ? "or " : "   ") : "";
-      return "\n" + prefix + div.padEnd(maxLen + 1) + rank;
-    })
-    .join("");
+  const rankStr =
+    (mode === EACH ? "   " : "") +
+    ranks
+      .map(([div, rank]) => (div == "0" ? "" : div.padEnd(maxLen + 1) + rank))
+      .filter((v) => v.length > 0)
+      .join(mode === EACH ? "\nor " : "\n");
   return `${user} needs to complete:
 \`\`\`
 ${rankStr}
@@ -165,6 +164,9 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
 
   // Get mode
   const mode = isMode(opts.mode) ? opts.mode : DEFAULTMODE;
+
+  // Validate limit
+  if (opts.limit && !/^[1-8]/.test(opts.limit)) return send("Invalid limit");
 
   // Get user data
   let score: number;
