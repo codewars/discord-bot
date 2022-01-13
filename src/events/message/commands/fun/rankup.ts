@@ -1,6 +1,6 @@
 import { z } from "zod";
-import fetch from "node-fetch";
 import { Message, CommandArg, word } from "../types";
+import { getUser } from "../../../../codewars";
 
 const USAGE: string =
   "Usage: `?rankup [<username> --target=(username|rank) --language=(py|js|...) --mode={least|each|spread} --limit=(1-8[kyu])]`";
@@ -23,72 +23,17 @@ Options:
   --limit=     The max rank to use in calculations ([1-8]kyu)
 */
 
-enum Mode {
-  Least = "least",
-  Each = "each",
-  Spread = "spread", // default
-}
-const DEFAULTMODE: Mode = Mode.Spread;
-const SPREADWEIGHT: number = 0.6; // used for Spread mode
+const LEAST = "least";
+const EACH = "each";
+const SPREAD = "spread";
+type Mode = typeof LEAST | typeof EACH | typeof SPREAD;
 
-const LANGS = new Set<string>([
-  "agda",
-  "bf",
-  "c",
-  "cfml",
-  "clojure",
-  "cobol",
-  "coffeescript",
-  "commonlisp",
-  "coq",
-  "cpp",
-  "crystal",
-  "csharp",
-  "d",
-  "dart",
-  "elixir",
-  "elm",
-  "erlang",
-  "factor",
-  "forth",
-  "fortran",
-  "fsharp",
-  "go",
-  "groovy",
-  "haskell",
-  "haxe",
-  "idris",
-  "java",
-  "javascript",
-  "julia",
-  "kotlin",
-  "lean",
-  "lua",
-  "nasm",
-  "nim",
-  "objc",
-  "ocaml",
-  "pascal",
-  "perl",
-  "php",
-  "powershell",
-  "prolog",
-  "purescript",
-  "python",
-  "r",
-  "racket",
-  "raku",
-  "reason",
-  "ruby",
-  "rust",
-  "scala",
-  "shell",
-  "solidarity",
-  "sql",
-  "swift",
-  "typescript",
-  "vb",
-]);
+function isMode(value: unknown): value is Mode {
+  return typeof value == "string" && (value == LEAST || value == EACH || value == SPREAD);
+}
+
+const DEFAULTMODE = SPREAD;
+const SPREADWEIGHT = 0.6; // used for Spread mode
 
 // https://docs.codewars.com/gamification/ranks
 // 3-8 dan added speculatively, based on trend
@@ -102,12 +47,12 @@ const RANKTHRESHOLDS: { [rank: string]: number } = {
   "1kyu": 13147,
   "1dan": 35759,
   "2dan": 97225,
-  "3dan": 264324,
-  "4dan": 718593,
-  "5dan": 1953551,
-  "6dan": 5310860,
-  "7dan": 14437910,
-  "8dan": 39250354,
+  "3dan": 264305,
+  "4dan": 718477,
+  "5dan": 1953045,
+  "6dan": 5308948,
+  "7dan": 14431239,
+  "8dan": 39228196,
 };
 
 const RANKPOINTS: { [rank: string]: number } = {
@@ -121,20 +66,72 @@ const RANKPOINTS: { [rank: string]: number } = {
   "1kyu": 1097,
 };
 
-const capitalise = (s: string): string =>
-  s.length ? s[0].toUpperCase() + s.slice(1).toLowerCase() : "";
+// Format final output string
+function formatResult(
+  user: string,
+  ranks: [number, string][],
+  target: string,
+  mode: Mode,
+  lang?: string
+) {
+  const maxLen = Math.max(...ranks.map((v) => String(v[0]).length));
+  const rankStr = ranks
+    .map(([div, rank], i) => {
+      if (!div) return "";
+      const pad = " ".repeat(maxLen - String(div).length + 1);
+      return mode === EACH
+        ? "\n" + (i ? "or " : "   ") + div + pad + rank
+        : "\n" + div + pad + rank;
+    })
+    .join("");
+  return `${user} needs to complete:
+\`\`\`
+${rankStr}
+\`\`\`
+to ${target}${lang ? " in " + lang : ""}`;
+}
 
-// Retrieve a users language score, or overall score if language is undefined
-const getUserLangScore = async (user: string, lang?: string): Promise<number | undefined> => {
-  return await fetch("https://www.codewars.com/api/v1/users/" + user)
-    .then((response: any): any => (response.status === 404 ? { success: false } : response.json()))
-    .then((result: any): any => {
-      if (result.success === false) return;
-      return (lang ? result.ranks.languages[lang] : result.ranks.overall)?.score ?? 0;
-    });
+export type Options = {
+  mode?: string;
+  language?: string;
+  target?: string;
+  limit?: string;
 };
 
-export default async (message: Message, args: CommandArg[], opts: Record<string, string>) => {
+async function getNextRank(
+  score: number,
+  user: string,
+  targ?: string,
+  lang?: string
+): Promise<[string, number] | string> {
+  // If target is a rank
+  if (targ && /[1-8](?:kyu|dan)/.test(targ)) {
+    let res: [string, number] = ["reach `" + targ + "`", RANKTHRESHOLDS[targ]];
+    if (res[1] <= score) return "Target has already been reached";
+    return res;
+  }
+
+  // If target is a user
+  if (targ) {
+    const targScore: number | string = await getUser(targ, lang).then(
+      (res) => res,
+      (err) => "Target user could not be found\n" + err
+    );
+    if (typeof targScore == "string") return targScore;
+    if (targScore < score) return `${user} has already reached ${targ}'s rank`;
+    return ["overtake " + targ, targScore - score + 1];
+  }
+
+  // Otherwise take next rank above user's current
+  let [nextRank, remaining] = Object.entries(RANKTHRESHOLDS)
+    .map(([rank, points]): [string, number] => [rank, points - score])
+    .filter(([, v]) => v > 0)
+    .reduce((a, c) => (a[1] < c[1] ? a : c));
+  nextRank = "reach `" + nextRank + "`";
+  return [nextRank, remaining];
+}
+
+export default async function (message: Message, args: CommandArg[], opts: Options) {
   // Helper function
   const send = (msg: string) => {
     message.channel.send(msg);
@@ -152,47 +149,23 @@ export default async (message: Message, args: CommandArg[], opts: Record<string,
     }
     [username] = result.data;
   }
-  // Get mode
-  const mode: Mode = (<any>Mode)[capitalise(String(opts.mode).toLowerCase())] ?? DEFAULTMODE;
 
-  // Check that language exists
-  if (opts.language && !LANGS.has(opts.language))
-    return send(
-      `\`${opts.language}\` is not a valid language ID.
-You can find the correct language ID here: <https://docs.codewars.com/languages/>`
-    );
+  // Get mode
+  const mode = isMode(opts.mode) ? opts.mode : DEFAULTMODE;
 
   // Get user data
-  const score: number | undefined = await getUserLangScore(username, opts.language);
-  if (score == undefined)
-    return send(`${username} is doomed to stay at :9kyu: forever. (user not found)`);
+  const score: number | string = await getUser(username, opts.language).then(
+    (res) => res,
+    (err) => `${username} is doomed to stay at :9kyu: forever. (user not found)\n${err}`
+  );
+  if (typeof score == "string") return send(score);
+  if (score == 0)
+    return send(`${username} has not started training \`${opts.language}\`, or the language ID is invalid.
+See <https://docs.codewars.com/languages/> to find the correct ID.`);
 
-  // Get target score and rank/user string
-  let nextRank: string;
-  let remaining: number;
-
-  // If target is a rank
-  if (/[1-8](?:kyu|dan)/.test(opts.target)) {
-    [nextRank, remaining] = ["reach `" + opts.target + "`", RANKTHRESHOLDS[opts.target]];
-    if (remaining <= score) return send("Target has already been reached");
-  }
-
-  // If target is a user
-  else if (opts.target) {
-    const targScore: number | undefined = await getUserLangScore(opts.target, opts.language);
-    if (targScore === undefined) return send("Target user could not be found");
-    if (targScore < score) return send(`${username} has already reached ${opts.target}'s rank'`);
-    [nextRank, remaining] = ["overtake " + opts.target, targScore - score + 1];
-  }
-
-  // Otherwise take next rank above user's current
-  else {
-    [nextRank, remaining] = Object.entries(RANKTHRESHOLDS)
-      .map(([rank, points]): [string, number] => [rank, points - score])
-      .filter(([, v]) => v > 0)
-      .reduce((a, c) => (a[1] < c[1] ? a : c));
-    nextRank = "reach `" + nextRank + "`";
-  }
+  const nextRankScore = await getNextRank(score, username, opts.target, opts.language);
+  if (typeof nextRankScore == "string") return send(nextRankScore);
+  let [nextRank, remaining]: [string, number] = nextRankScore;
 
   // Get number of each kata required to reach the target
   const rankNums: [number, string][] = Object.entries(RANKPOINTS)
@@ -201,30 +174,16 @@ You can find the correct language ID here: <https://docs.codewars.com/languages/
     .map(([rank, points]) => {
       if (points > remaining && rank != "8kyu") return [0, ""];
       let div: number;
-      if (rank === "8kyu" || mode === Mode.Each) {
+      if (rank === "8kyu" || mode === EACH) {
         div = Math.ceil(remaining / points);
       } else {
         div = Math.floor(remaining / points);
-        if (mode === Mode.Spread) div = Math.floor(div * SPREADWEIGHT);
+        if (mode === SPREAD) div = Math.floor(div * SPREADWEIGHT);
       }
-      if (mode !== Mode.Each) remaining -= div * points;
+      if (mode !== EACH) remaining -= div * points;
       return [div, rank];
     });
 
   // Format results and send
-  const maxLen: number = Math.max(...rankNums.map((v) => String(v[0]).length));
-  const rankStr: string = rankNums
-    .map(([div, rank], i) => {
-      if (!div) return "";
-      const pad: string = " ".repeat(maxLen - String(div).length + 1);
-      return mode === Mode.Each
-        ? "\n" + (i ? "or " : "   ") + div + pad + rank
-        : "\n" + div + pad + rank;
-    })
-    .join("");
-  return send(`${username} needs to complete:
-\`\`\`
-${rankStr}
-\`\`\`
-to ${nextRank}${opts.language ? " in " + opts.language : ""}`);
-};
+  return send(formatResult(username, rankNums, nextRank, mode, opts.language));
+}
