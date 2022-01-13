@@ -10,6 +10,7 @@ const LINKS: { [k: string]: string } = {
   authoring: "https://docs.codewars.com/authoring",
   ranking: "https://docs.codewars.com/curation/kata",
   troubleshooting: "https://docs.codewars.com/training/troubleshooting",
+  debug: "https://docs.codewars.com/training/troubleshooting",
   github: "https://github.com/codewars/",
   clans: "https://docs.codewars.com/community/following/#clans",
 };
