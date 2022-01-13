@@ -115,7 +115,7 @@ async function getNextRank(
   if (targ) {
     const targScore: number | string = await getUser(targ, lang).then(
       (res) => res,
-      (err) => "Target user could not be found\n" + err
+      () => "Target user could not be found"
     );
     if (typeof targScore == "string") return targScore;
     if (targScore < score) return `${user} has already reached ${targ}'s rank`;
@@ -156,7 +156,7 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
   // Get user data
   const score: number | string = await getUser(username, opts.language).then(
     (res) => res,
-    (err) => `${username} is doomed to stay at :9kyu: forever. (user not found)\n${err}`
+    () => `${username} is doomed to stay at :9kyu: forever. (user not found)`
   );
   if (typeof score == "string") return send(score);
   if (score == 0)
