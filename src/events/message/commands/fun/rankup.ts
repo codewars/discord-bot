@@ -3,7 +3,7 @@ import { Message, CommandArg, word } from "../types";
 import { getUser } from "../../../../codewars";
 
 const USAGE: string =
-  "Usage: `?rankup [<username> --target=(username|rank) --language=(py|js|...) --mode={least|each|spread} --limit=(1-8[kyu])]`";
+  "Usage: `?rankup [<username> --target={username|rank} --language={languageID} --mode={least|each|spread} --limit={1-8[kyu]}]`";
 
 /*
 `?rankup` calculates the number of katas of each rank required for a user to rank up.
@@ -21,6 +21,7 @@ Options:
                   Each finds number of katas per rank individually
                   Spread (default) prioritises high katas, but also distributes points to lower ones
   --limit=     The max rank to use in calculations ([1-8]kyu)
+  --help       Display USAGE
 */
 
 const LEAST = "least";
@@ -96,6 +97,7 @@ export type Options = {
   language?: string;
   target?: string;
   limit?: string;
+  help?: string;
 };
 
 async function getNextRank(
@@ -149,6 +151,9 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
     }
     [username] = result.data;
   }
+
+  // If help option set, simply reply with usage info
+  if (opts.help !== undefined) return send(USAGE);
 
   // Get mode
   const mode = isMode(opts.mode) ? opts.mode : DEFAULTMODE;
