@@ -38,6 +38,6 @@ export async function getUser(user: string, lang?: string): Promise<number> {
 
 export class UserNotFoundError extends Error {
   constructor(user: string) {
-    super(`user ${user} not found`);
+    super(`Could not find user: ${user}`);
   }
 }

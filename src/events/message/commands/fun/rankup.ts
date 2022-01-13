@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import { Message, CommandArg, word } from "../types";
-import { getUser } from "../../../../codewars";
+import { getUser, UserNotFoundError } from "../../../../codewars";
 
 const USAGE: string =
   "Usage: `?rankup [<username> --target={username|rank} --language={languageID} --mode={least|each|spread} --limit={1-8[kyu]}]`";
@@ -70,7 +70,7 @@ const RANKPOINTS: { [rank: string]: number } = {
 // Format final output string
 function formatResult(
   user: string,
-  ranks: [number, string][],
+  ranks: [string, string][],
   target: string,
   mode: Mode,
   lang?: string
@@ -78,11 +78,9 @@ function formatResult(
   const maxLen = Math.max(...ranks.map((v) => String(v[0]).length));
   const rankStr = ranks
     .map(([div, rank], i) => {
-      if (!div) return "";
-      const pad = " ".repeat(maxLen - String(div).length + 1);
-      return mode === EACH
-        ? "\n" + (i ? "or " : "   ") + div + pad + rank
-        : "\n" + div + pad + rank;
+      if (div == "0") return "";
+      const prefix = mode === EACH ? (i ? "or " : "   ") : "";
+      return "\n" + prefix + div.padEnd(maxLen + 1) + rank;
     })
     .join("");
   return `${user} needs to complete:
@@ -90,6 +88,16 @@ function formatResult(
 ${rankStr}
 \`\`\`
 to ${target}${lang ? " in " + lang : ""}`;
+}
+
+function errorMessage(err: unknown): string {
+  if (err instanceof UserNotFoundError) {
+    return err.message;
+  }
+  if (err instanceof ZodError) {
+    return `Got unexpected response from Codewars API:\n${err.message}`;
+  }
+  return `Unknown error: ${err}`;
 }
 
 export type Options = {
@@ -115,13 +123,13 @@ async function getNextRank(
 
   // If target is a user
   if (targ) {
-    const targScore: number | string = await getUser(targ, lang).then(
-      (res) => res,
-      () => "Target user could not be found"
-    );
-    if (typeof targScore == "string") return targScore;
-    if (targScore < score) return `${user} has already reached ${targ}'s rank`;
-    return ["overtake " + targ, targScore - score + 1];
+    try {
+      const targScore = await getUser(targ, lang);
+      if (targScore < score) return `${user} has already reached ${targ}'s rank`;
+      return ["overtake " + targ, targScore - score + 1];
+    } catch (err) {
+      return errorMessage(err);
+    }
   }
 
   // Otherwise take next rank above user's current
@@ -159,11 +167,12 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
   const mode = isMode(opts.mode) ? opts.mode : DEFAULTMODE;
 
   // Get user data
-  const score: number | string = await getUser(username, opts.language).then(
-    (res) => res,
-    () => `${username} is doomed to stay at :9kyu: forever. (user not found)`
-  );
-  if (typeof score == "string") return send(score);
+  let score: number;
+  try {
+    score = await getUser(username, opts.language);
+  } catch (err) {
+    return send(errorMessage(err));
+  }
   if (score == 0)
     return send(`${username} has not started training \`${opts.language}\`, or the language ID is invalid.
 See <https://docs.codewars.com/languages/> to find the correct ID.`);
@@ -173,11 +182,11 @@ See <https://docs.codewars.com/languages/> to find the correct ID.`);
   let [nextRank, remaining]: [string, number] = nextRankScore;
 
   // Get number of each kata required to reach the target
-  const rankNums: [number, string][] = Object.entries(RANKPOINTS)
+  const rankNums: [string, string][] = Object.entries(RANKPOINTS)
     .filter(([k]) => Number(k[0]) >= Number(String(opts.limit ?? 1)[0]))
     .sort((a, b) => b[1] - a[1])
     .map(([rank, points]) => {
-      if (points > remaining && rank != "8kyu") return [0, ""];
+      if (points > remaining && rank != "8kyu") return ["0", ""];
       let div: number;
       if (rank === "8kyu" || mode === EACH) {
         div = Math.ceil(remaining / points);
@@ -186,7 +195,7 @@ See <https://docs.codewars.com/languages/> to find the correct ID.`);
         if (mode === SPREAD) div = Math.floor(div * SPREADWEIGHT);
       }
       if (mode !== EACH) remaining -= div * points;
-      return [div, rank];
+      return [String(div), rank];
     });
 
   // Format results and send
