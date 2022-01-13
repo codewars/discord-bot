@@ -27,6 +27,7 @@ export default (plop: NodePlopAPI) => {
           { name: "Dev", value: "dev" },
           { name: "Help", value: "help" },
           { name: "Moderation", value: "moderation" },
+          { name: "Fun", value: "fun" },
         ],
       },
     ],
