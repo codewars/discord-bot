@@ -156,7 +156,7 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
       message.reply(USAGE);
       return;
     }
-    [username] = result.data;
+    username = result.data.join(' ');
   }
 
   // If help option set, simply reply with usage info
