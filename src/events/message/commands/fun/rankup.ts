@@ -115,9 +115,9 @@ async function getNextRank(
 ): Promise<[string, number] | string> {
   // If target is a rank
   if (targ && /[1-8](?:kyu|dan)/.test(targ)) {
-    let res: [string, number] = ["reach `" + targ + "`", RANKTHRESHOLDS[targ]];
-    if (res[1] <= score) return "Target has already been reached";
-    return res;
+    const targScore = RANKTHRESHOLDS[targ];
+    if (targScore <= score) return "Target has already been reached";
+    return ["reach `" + targ + "`", targScore - score];
   }
 
   // If target is a user
