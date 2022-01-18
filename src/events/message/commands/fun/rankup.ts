@@ -39,6 +39,7 @@ const SPREADWEIGHT = 0.6; // used for Spread mode
 // https://docs.codewars.com/gamification/ranks
 // 3-8 dan added speculatively, based on trend
 const RANKTHRESHOLDS: { [rank: string]: number } = {
+  "8kyu": 0,
   "7kyu": 20,
   "6kyu": 76,
   "5kyu": 229,
@@ -86,7 +87,7 @@ function formatResult(
 \`\`\`
 ${rankStr}
 \`\`\`
-to ${target}${lang ? " in " + lang : ""}`;
+to ${target}${lang ? ` in {lang}` : ""}`;
 }
 
 function errorMessage(err: unknown): string {
@@ -114,10 +115,10 @@ async function getNextRank(
   lang?: string
 ): Promise<[string, number] | string> {
   // If target is a rank
-  if (targ && /[1-8](?:kyu|dan)/.test(targ)) {
+  if (targ && /^[1-8](?:kyu|dan)$/.test(targ)) {
     const targScore = RANKTHRESHOLDS[targ];
     if (targScore <= score) return "Target has already been reached";
-    return ["reach `" + targ + "`", targScore - score];
+    return [`reach \`${targ}\``, targScore - score];
   }
 
   // If target is a user
@@ -125,7 +126,7 @@ async function getNextRank(
     try {
       const targScore = await getUser(targ, lang);
       if (targScore < score) return `${user} has already reached ${targ}'s rank`;
-      return ["overtake " + targ, targScore - score + 1];
+      return [`overtake ${targ}`, targScore - score + 1];
     } catch (err) {
       return errorMessage(err);
     }
@@ -136,7 +137,7 @@ async function getNextRank(
     .map(([rank, points]): [string, number] => [rank, points - score])
     .filter(([, v]) => v > 0)
     .reduce((a, c) => (a[1] < c[1] ? a : c));
-  nextRank = "reach `" + nextRank + "`";
+  nextRank = `reach \`${nextRank}\``;
   return [nextRank, remaining];
 }
 
@@ -166,7 +167,7 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
   const mode = isMode(opts.mode) ? opts.mode : DEFAULTMODE;
 
   // Validate limit
-  if (opts.limit && !/^[1-8]/.test(opts.limit)) return send("Invalid limit");
+  if (opts.limit && !/^[1-8]$/.test(opts.limit)) return send("Invalid limit");
 
   // Get user data
   let score: number;
