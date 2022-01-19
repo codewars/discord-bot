@@ -87,7 +87,7 @@ function formatResult(
 \`\`\`
 ${rankStr}
 \`\`\`
-to ${target}${lang ? ` in {lang}` : ""}`;
+to ${target}${lang ? ` in ${lang}` : ""}`;
 }
 
 function errorMessage(err: unknown): string {
