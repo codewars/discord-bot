@@ -8,7 +8,7 @@ const PREFIX = process.env.COMMAND_PREFIX || "?";
 const HELP: string = `The following commands are available:
 
 ${Object.keys(commands)
-  .map((name) => `- \`?${name}\``)
+  .map((name) => `- \`${PREFIX}${name}\``)
   .join("\n")}
 
 Note that some commands are only available to privileged users.`;
