@@ -1,9 +1,11 @@
+import { TextChannel } from "discord.js";
 import { z, ZodError } from "zod";
 import { Message, CommandArg, word } from "../types";
 import { getUser, UserNotFoundError } from "../../../../codewars";
 
 const USAGE: string =
   "Usage: `?rankup [<username> --target={username|rank} --language={languageID} --mode={least|each|spread} --limit={1-8[kyu]}]`";
+const REDIRECT: string = "This command is only available in channel **#bot-playground**";
 
 /*
 `?rankup` calculates the number of katas of each rank required for a user to rank up.
@@ -159,6 +161,9 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
     }
     [username] = result.data;
   }
+
+  // If current channel is not #bot-playground, redirect them to that channel
+  if ((message.channel as TextChannel).name !== "bot-playground") return send(REDIRECT);
 
   // If help option set, simply reply with usage info
   if (opts.help !== undefined) return send(USAGE);
