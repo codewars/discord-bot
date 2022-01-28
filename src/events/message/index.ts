@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 import commands, { parseArguments } from "./commands";
 import handlers from "./handlers";
 
-const PREFIX = process.env.COMMAND_PREFIX || "?";
+export const PREFIX = process.env.COMMAND_PREFIX || "?";
 
 const HELP: string = `The following commands are available:
 
