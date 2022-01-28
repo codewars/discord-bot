@@ -148,6 +148,10 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
   const send = (msg: string) => {
     message.channel.send(msg);
   };
+
+  // If current channel is not #bot-playground, redirect them to that channel
+  if ((message.channel as TextChannel).name !== "bot-playground") return send(REDIRECT);
+
   let username: string;
   if (args.length == 0) {
     if (!message.member?.displayName) return;
@@ -161,9 +165,6 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
     }
     [username] = result.data;
   }
-
-  // If current channel is not #bot-playground, redirect them to that channel
-  if ((message.channel as TextChannel).name !== "bot-playground") return send(REDIRECT);
 
   // If help option set, simply reply with usage info
   if (opts.help !== undefined) return send(USAGE);
