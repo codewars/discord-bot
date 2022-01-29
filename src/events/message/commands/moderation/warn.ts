@@ -2,8 +2,10 @@ import { z } from "zod";
 import { fromModerator, getTexts } from "../../../../common";
 import { Message, CommandArg, discordUser, word } from "../types";
 
+const PREFIX = process.env.COMMAND_PREFIX || "?";
+
 const reasons = ["conduct", "content", "spam"];
-const USAGE = `Usage: \`?warn @user {${reasons.join(",")}}\``;
+const USAGE = `Usage: \`${PREFIX}warn @user {${reasons.join(",")}}\``;
 const warnTexts: Map<string, string> = getTexts("warn", reasons);
 
 // warn

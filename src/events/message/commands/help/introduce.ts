@@ -1,10 +1,11 @@
 import { z } from "zod";
-
 import { fromTrustedUser, getTexts } from "../../../../common";
 import { Message, CommandArg, discordUser, discordTextChannel } from "../types";
 
+const PREFIX = process.env.COMMAND_PREFIX || "?";
+
 const channels = ["help-solve"];
-const USAGE = `Usage: \`?introduce @user #{${channels.join(",")}}\``;
+const USAGE = `Usage: \`${PREFIX}introduce @user #{${channels.join(",")}}\``;
 const channelTexts: Map<string, string> = getTexts("introduce", channels);
 
 // introduce

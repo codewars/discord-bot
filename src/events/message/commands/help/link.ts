@@ -1,7 +1,9 @@
 import { z } from "zod";
 import { CommandArg, Message, word } from "../types";
 
-// "?link <topic>" provides a simple shortcut to various useful URLs
+const PREFIX = process.env.COMMAND_PREFIX || "?";
+
+// `${PREFIX}link <topic>` provides a simple shortcut to various useful URLs
 
 const LINKS: { [k: string]: string } = {
   docs: "https://docs.codewars.com/",
@@ -16,7 +18,7 @@ const LINKS: { [k: string]: string } = {
   vim: "https://docs.codewars.com/references/kata-trainer/#editors",
 };
 
-const USAGE: string = `Usage: \`?link {${Object.keys(LINKS).join("|")}}\``;
+const USAGE: string = `Usage: \`${PREFIX}link {${Object.keys(LINKS).join("|")}}\``;
 
 export default async (message: Message, args: CommandArg[]) => {
   // Input validation
