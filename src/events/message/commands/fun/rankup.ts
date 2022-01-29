@@ -150,10 +150,7 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
   };
 
   // If current channel is not #bot-playground, redirect them to that channel
-  if ((message.channel as TextChannel).name !== "bot-playground") {
-    message.reply(REDIRECT);
-    return;
-  }
+  if ((message.channel as TextChannel).name !== "bot-playground") return send(REDIRECT);
 
   let username: string;
   if (args.length == 0) {
@@ -170,10 +167,7 @@ export default async function (message: Message, args: CommandArg[], opts: Optio
   }
 
   // If help option set, simply reply with usage info
-  if (opts.help !== undefined) {
-    message.reply(USAGE);
-    return;
-  }
+  if (opts.help !== undefined) return send(USAGE);
 
   // Get mode
   const mode = isMode(opts.mode) ? opts.mode : DEFAULTMODE;
