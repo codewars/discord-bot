@@ -7,6 +7,10 @@ const isTrustedUser = (role: Role) => isModerator(role) || role.name === "power-
 
 const textPath = path.join(__dirname, "../text");
 
+const DEFAULT_PREFIX = "?";
+
+export const PREFIX = process.env.COMMAND_PREFIX || DEFAULT_PREFIX;
+
 export const fromModerator = (message: Message): boolean => {
   const author = message.guild?.members.cache.get(message.author.id);
   if (!author) return false;

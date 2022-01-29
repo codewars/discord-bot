@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { fromTrustedUser, getTexts } from "../../../../common";
 import { Message, CommandArg, discordUser, discordTextChannel } from "../types";
-
-const PREFIX = process.env.COMMAND_PREFIX || "?";
+import { PREFIX } from "../../../../common";
 
 const channels = ["help-solve"];
 const USAGE = `Usage: \`${PREFIX}introduce @user #{${channels.join(",")}}\``;

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { CommandArg, Message, word } from "../types";
-
-const PREFIX = process.env.COMMAND_PREFIX || "?";
+import { PREFIX } from "../../../../common";
 
 // `${PREFIX}link <topic>` provides a simple shortcut to various useful URLs
 

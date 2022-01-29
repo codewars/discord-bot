@@ -1,6 +1,5 @@
 import { Client } from "discord.js";
-
-const PREFIX = process.env.COMMAND_PREFIX || "?";
+import { PREFIX } from "../common";
 
 export const makeOnReady = (bot: Client) => async () => {
   console.log("ready!");

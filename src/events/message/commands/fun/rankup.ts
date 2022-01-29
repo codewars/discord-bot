@@ -2,8 +2,7 @@ import { TextChannel } from "discord.js";
 import { z, ZodError } from "zod";
 import { Message, CommandArg, word } from "../types";
 import { getUser, UserNotFoundError } from "../../../../codewars";
-
-const PREFIX = process.env.COMMAND_PREFIX || "?";
+import { PREFIX } from "../../../../common";
 
 const USAGE: string = `Usage: \`${PREFIX}rankup [<username> --target={username|rank} --language={languageID} --mode={least|each|spread} --limit={1-8[kyu]}]\``;
 const REDIRECT: string = "This command is only available in channel **#bot-playground**";

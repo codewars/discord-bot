@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { fromModerator, getTexts } from "../../../../common";
 import { Message, CommandArg, discordUser, word } from "../types";
-
-const PREFIX = process.env.COMMAND_PREFIX || "?";
+import { PREFIX } from "../../../../common";
 
 const reasons = ["conduct", "content", "spam"];
 const USAGE = `Usage: \`${PREFIX}warn @user {${reasons.join(",")}}\``;
