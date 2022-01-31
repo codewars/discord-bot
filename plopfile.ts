@@ -25,13 +25,14 @@ export default (plop: NodePlopAPI) => {
         choices: [
           // TODO: add more categories as needed
           { name: "Dev", value: "dev" },
+          { name: "Moderation", value: "moderation" },
         ],
       },
     ],
     actions: [
       {
         type: "add",
-        path: "src/events/message/commands/{{category}}/{{name}}.ts",
+        path: "src/events/interactionCreate/commands/{{category}}/{{name}}.ts",
         templateFile: "templates/command.ts.hbs",
       },
     ],

@@ -3,7 +3,7 @@ import { REST } from "@discordjs/rest";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Routes } from "discord-api-types/v9";
 import { onMessageCreate, onInteractionCreate, makeOnReady } from "./events";
-import commands from "./events/messageCreate/commands";
+import commands from "./events/interactionCreate/commands";
 
 const CLIENT_ID = process.env.CLIENT_ID;
 if (!CLIENT_ID) throw new Error("missing CLIENT_ID");

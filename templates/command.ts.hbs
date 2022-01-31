@@ -7,7 +7,7 @@ export default {
     .setName("{{name}}")
     .setDescription("A description for command {{name}}"),
   response: async (interaction: CommandInteraction) => {
-    // TODO don't forget to include this module in `commands` in `src/events/message/commands/index.ts`
+    // TODO don't forget to include this module in `commands` in `src/events/interactionCreate/commands/index.ts`
     await interaction.reply('pong')
   }
 };

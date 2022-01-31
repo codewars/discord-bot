@@ -1,5 +1,5 @@
 import { Interaction } from "discord.js";
-import commands from "../messageCreate/commands";
+import commands from "./commands";
 
 const HELP: string = `The following commands are available:
 
