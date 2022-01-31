@@ -4,6 +4,7 @@ import echo from "./dev/echo";
 import warn from "./moderation/warn";
 import introduce from "./help/introduce";
 import link from "./help/link";
+import rankup from "./fun/rankup";
 
 const commands: { [k: string]: Command } = {
   ping,
@@ -11,5 +12,6 @@ const commands: { [k: string]: Command } = {
   warn,
   introduce,
   link,
+  rankup,
 };
 export default commands;
