@@ -1,8 +1,9 @@
 import { Client, Intents } from "discord.js";
 import { REST } from "@discordjs/rest";
+import { SlashCommandBuilder } from "@discordjs/builders";
 import { Routes } from "discord-api-types/v9";
-import { onMessage, onInteraction, makeOnReady } from "./events";
-import commands from "./events/message/commands";
+import { onMessageCreate, onInteractionCreate, makeOnReady } from "./events";
+import commands from "./events/messageCreate/commands";
 
 const CLIENT_ID = process.env.CLIENT_ID;
 if (!CLIENT_ID) throw new Error("missing CLIENT_ID");
@@ -16,7 +17,10 @@ const rest = new REST({ version: "9" }).setToken(TOKEN);
 (async () => {
   try {
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-      body: Object.values(commands).map((command) => command.spec.toJSON()),
+      body: [
+        new SlashCommandBuilder().setName("help").setDescription("Get help from our bot"),
+        ...Object.values(commands).map((command) => command.spec.toJSON()),
+      ],
     });
 
     const bot = new Client({
@@ -28,8 +32,8 @@ const rest = new REST({ version: "9" }).setToken(TOKEN);
     });
 
     bot.once("ready", makeOnReady(bot));
-    bot.on("messageCreate", onMessage);
-    bot.on("interactionCreate", onInteraction);
+    bot.on("messageCreate", onMessageCreate);
+    bot.on("interactionCreate", onInteractionCreate);
 
     bot.login(TOKEN);
   } catch (error) {

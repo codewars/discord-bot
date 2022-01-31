@@ -1,8 +1,16 @@
 import { Interaction } from "discord.js";
-import commands from "../message/commands";
+import commands from "../messageCreate/commands";
+
+const HELP: string = `The following commands are available:
+
+${Object.keys(commands)
+  .map((name) => `- \`/${name}\``)
+  .join("\n")}
+
+Note that some commands are only available to privileged users.`;
 
 // `client` can be accessed from `interaction.client`.
-export const onInteraction = async (interaction: Interaction) => {
+export const onInteractionCreate = async (interaction: Interaction) => {
   // Only react to slash commands
   if (!interaction.isCommand()) return;
 
@@ -11,6 +19,11 @@ export const onInteraction = async (interaction: Interaction) => {
 
   // Process each command, in order
   const name = interaction.commandName;
+  // help is a special command
+  if (name === "help") {
+    await interaction.reply(HELP);
+    return;
+  }
   if (name && commands.hasOwnProperty(name)) {
     try {
       await commands[name].response(interaction);

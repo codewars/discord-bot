@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 import handlers from "./handlers";
 
 // `client` can be accessed from `message.client`.
-export const onMessage = async (message: Message) => {
+export const onMessageCreate = async (message: Message) => {
   // Never react to bots
   if (message.author.bot) return;
 

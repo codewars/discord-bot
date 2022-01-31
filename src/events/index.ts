@@ -1,3 +1,3 @@
-export { onMessage } from "./message";
-export { onInteraction } from "./interaction";
+export { onMessageCreate } from "./messageCreate";
+export { onInteractionCreate } from "./interactionCreate";
 export { makeOnReady } from "./ready";
