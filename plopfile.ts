@@ -26,6 +26,7 @@ export default (plop: NodePlopAPI) => {
           // TODO: add more categories as needed
           { name: "Dev", value: "dev" },
           { name: "Moderation", value: "moderation" },
+          { name: "Help", value: "help" },
         ],
       },
     ],
