@@ -1,6 +1,10 @@
-import { Message } from "../types";
+import { CommandInteraction } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
 
-// ping takes no args
-export default async (message: Message) => {
-  await message.reply("pong");
+// ping
+export default {
+  spec: new SlashCommandBuilder().setName("ping").setDescription("Pings the bot for a response"),
+  response: async (interaction: CommandInteraction) => {
+    await interaction.reply("pong");
+  },
 };

@@ -23,11 +23,8 @@ export default (plop: NodePlopAPI) => {
         message: "command category",
         default: 0,
         choices: [
-          // TODO add more categories as needed
+          // TODO: add more categories as needed
           { name: "Dev", value: "dev" },
-          { name: "Help", value: "help" },
-          { name: "Moderation", value: "moderation" },
-          { name: "Fun", value: "fun" },
         ],
       },
     ],
