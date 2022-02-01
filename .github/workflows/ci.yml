@@ -17,4 +17,3 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - run: npm ci --no-audit
-      - run: npm test
