@@ -6,8 +6,9 @@ export const makeOnReady = (bot: Client) => async () => {
     status: "online",
     activities: [
       {
-        name: `/help`,
+        name: "Codewars",
         type: "PLAYING",
+        url: "https://www.codewars.com/",
       },
     ],
   });

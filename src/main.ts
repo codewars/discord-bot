@@ -1,6 +1,5 @@
 import { Client, Intents } from "discord.js";
 import { REST } from "@discordjs/rest";
-import { SlashCommandBuilder } from "@discordjs/builders";
 import { Routes } from "discord-api-types/v9";
 import { onMessageCreate, onInteractionCreate, makeOnReady } from "./events";
 import commands from "./events/interactionCreate/commands";
@@ -17,10 +16,7 @@ const rest = new REST({ version: "9" }).setToken(TOKEN);
 (async () => {
   try {
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-      body: [
-        new SlashCommandBuilder().setName("help").setDescription("Get help from our bot"),
-        ...Object.values(commands).map((command) => command.spec.toJSON()),
-      ],
+      body: Object.values(commands).map((command) => command.spec.toJSON()),
     });
 
     const bot = new Client({
