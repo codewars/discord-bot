@@ -58,7 +58,7 @@ export default (plop: NodePlopAPI) => {
     actions: [
       {
         type: "add",
-        path: "src/events/message/handlers/{{name}}.ts",
+        path: "src/events/messageCreate/handlers/{{name}}.ts",
         templateFile: "templates/message-handler.ts.hbs",
       },
     ],
