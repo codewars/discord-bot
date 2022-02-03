@@ -16,10 +16,13 @@ export default async (message: Message) => {
   // React to the new message so users can just click it.
   const reaction = await newMessage.react(Q);
   newMessage
-    .createReactionCollector((reaction, _user) => reaction.emoji.name === Q, {
+    .createReactionCollector({
+      filter: (reaction, _user) => reaction.emoji.name === Q,
       time: REACTION_SECS * 1000,
     })
     .on("collect", async (_reaction, user) => {
+      if (user.bot) return;
+
       try {
         const dm = await user.createDM();
         await dm.send(INFO);

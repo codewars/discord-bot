@@ -1,2 +1,2 @@
-export { onMessage } from "./message";
+export { onMessageCreate } from "./messageCreate";
 export { makeOnReady } from "./ready";
