@@ -14,7 +14,7 @@ ${Object.keys(commands)
 Note that some commands are only available to privileged users.`;
 
 // `client` can be accessed from `message.client`.
-export const onMessage = async (message: Message) => {
+export const onMessageCreate = async (message: Message) => {
   // Never react to bots
   if (message.author.bot) return;
 
