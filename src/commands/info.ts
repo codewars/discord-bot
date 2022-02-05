@@ -17,7 +17,7 @@ export const data = new SlashCommandBuilder()
 export const call = async (interaction: CommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "user":
-      const user = interaction.options.getUser("target") || interaction.user;
+      const user = interaction.options.getUser("user") || interaction.user;
       await interaction.reply(`Username: ${user.username}\nID: ${user.id}`);
       return;
 
