@@ -6,6 +6,7 @@ import { Config } from "../config";
 
 import * as echo from "./echo";
 import * as info from "./info";
+import * as link from "./link";
 
 export type Command = {
   // Data to send when registering.
@@ -17,6 +18,7 @@ export type Command = {
 export const commands: { [k: string]: Command } = {
   echo,
   info,
+  link,
 };
 
 // The caller is responsible for catching any error thrown
