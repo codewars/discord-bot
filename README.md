@@ -20,6 +20,8 @@ The following environment variables are used:
 - `BOT_TOKEN` (required): The token used to log in.
 - `COMMAND_PREFIX`: The prefix used to identify commands. Defaults to `?`.
 
+Use `.env.development` (gitignored) to configure these variables.
+
 ## Developement Setup
 
 > NOTE: Please discuss with us first before adding new features to avoid wasting your time.
@@ -33,7 +35,8 @@ After forking this repo and cloning your fork to your local development environm
 1. Change directory to the root of this repo: `$ cd /path/to/your/discord-bot`
 1. Install dependencies and compile TypeScript: `$ npm install`
 1. Start TypeScript compiler process to recompile on change: `$ npm run build:watch`
-1. In a new terminal session, run the bot with [your token](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token): `$ BOT_TOKEN=... npm start`
+1. Copy `.env.example` to `.env.development` and set `BOT_TOKEN` to [your token](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token).
+1. In a new terminal session, run the bot with: `$ npm start`
 
 After confirming that the bot works as expected, make changes to the local copy of your fork as appropriate and test your changes by restarting the bot.
 
