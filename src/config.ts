@@ -19,8 +19,17 @@ export const fromEnv = () => {
         schema: z.string().nonempty(),
       },
       // Required for slash commands
-      // CLIENT_ID: { schema: z.string().nonempty() },
-      // GUILD_ID: { schema: z.string().nonempty() },
+      // TODO Should this be APPLICATION_ID?
+      CLIENT_ID: {
+        // TODO Add a link to some documentation
+        description: "Your bot's client id.",
+        schema: z.string().nonempty(),
+      },
+      GUILD_ID: {
+        // TODO Add a link to some documentation
+        description: "The server id",
+        schema: z.string().nonempty(),
+      },
     });
   } catch (e) {
     if (e instanceof Error) {
@@ -31,3 +40,5 @@ export const fromEnv = () => {
     process.exit(1);
   }
 };
+
+export type Config = ReturnType<typeof fromEnv>;
