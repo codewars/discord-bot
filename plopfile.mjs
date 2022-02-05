@@ -1,8 +1,6 @@
-import { NodePlopAPI } from "plop";
-
 // See https://github.com/plopjs/plop
 // Run `npx plop` to generate a boilerplate.
-export default (plop: NodePlopAPI) => {
+export default (/** @type {import('plop').NodePlopAPI} */ plop) => {
   plop.setGenerator("command", {
     description: "new command",
     prompts: [
