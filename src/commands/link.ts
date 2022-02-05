@@ -14,10 +14,6 @@ const LINKS: { [k: string]: { description: string; url: string } } = {
     description: "Kata | Codewars",
     url: "https://www.codewars.com/kata",
   },
-  katas: {
-    description: "Kata | Codewars",
-    url: "https://www.codewars.com/kata",
-  },
   authoring: {
     description: "Authoring Content | The Codewars Docs",
     url: "https://docs.codewars.com/authoring",
@@ -26,15 +22,7 @@ const LINKS: { [k: string]: { description: string; url: string } } = {
     description: "Reviewing a Kata",
     url: "https://docs.codewars.com/curation/kata",
   },
-  ranking: {
-    description: "Reviewing a Kata",
-    url: "https://docs.codewars.com/curation/kata",
-  },
   troubleshooting: {
-    description: "Troubleshooting Your Solution | The Codewars Docs",
-    url: "https://docs.codewars.com/training/troubleshooting",
-  },
-  debug: {
     description: "Troubleshooting Your Solution | The Codewars Docs",
     url: "https://docs.codewars.com/training/troubleshooting",
   },
@@ -61,7 +49,7 @@ export const data = new SlashCommandBuilder()
       .setName("topic")
       .setDescription("The topic to link to")
       .setRequired(true)
-      .addChoices(Object.keys(LINKS).map((k) => [k, k]))
+      .addChoices(Object.keys(LINKS).map((k) => [LINKS[k].description, k]))
   )
   .addUserOption((option) =>
     option.setName("target").setDescription("Direct the specified user to the given link")
@@ -74,5 +62,8 @@ export const call = async (interaction: CommandInteraction) => {
   const linkInfo = LINKS[topic];
   let replyMsg = `See ${hyperlink(linkInfo.description, hideLinkEmbed(linkInfo.url))}`;
   if (target) replyMsg = `${userMention(target.id)} ${replyMsg}`;
-  await interaction.reply(replyMsg);
+  await interaction.reply({
+    content: replyMsg,
+    ephemeral: !target,
+  });
 };
