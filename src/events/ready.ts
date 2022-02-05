@@ -1,5 +1,4 @@
 import { Client } from "discord.js";
-import { PREFIX } from "./messageCreate";
 
 export const makeOnReady = (bot: Client) => async () => {
   console.log("ready!");
@@ -7,7 +6,7 @@ export const makeOnReady = (bot: Client) => async () => {
     status: "online",
     activities: [
       {
-        name: `${PREFIX}help`,
+        name: `?help`,
         type: "PLAYING",
       },
     ],

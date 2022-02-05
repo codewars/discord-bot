@@ -21,13 +21,13 @@ export const fromEnv = () => {
       // Required for slash commands
       // TODO Should this be APPLICATION_ID?
       CLIENT_ID: {
-        // TODO Add a link to some documentation
-        description: "Your bot's client id.",
+        description:
+          "Your bot's application id. See https://support-dev.discord.com/hc/en-us/articles/360028717192-Where-can-I-find-my-Application-Team-Server-ID-",
         schema: z.string().nonempty(),
       },
       GUILD_ID: {
-        // TODO Add a link to some documentation
-        description: "The server id",
+        description:
+          "The server id. See https://support-dev.discord.com/hc/en-us/articles/360028717192-Where-can-I-find-my-Application-Team-Server-ID-",
         schema: z.string().nonempty(),
       },
     });

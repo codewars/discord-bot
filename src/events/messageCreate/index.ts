@@ -3,12 +3,10 @@ import { Message } from "discord.js";
 import commands, { parseArguments } from "./commands";
 import handlers from "./handlers";
 
-export const PREFIX = process.env.COMMAND_PREFIX || "?";
-
 const HELP: string = `The following commands are available:
 
 ${Object.keys(commands)
-  .map((name) => `- \`${PREFIX}${name}\``)
+  .map((name) => `- \`?${name}\``)
   .join("\n")}
 
 Note that some commands are only available to privileged users.`;
@@ -19,8 +17,8 @@ export const onMessageCreate = async (message: Message) => {
   if (message.author.bot) return;
 
   const content = message.content;
-  if (content.startsWith(PREFIX)) {
-    const rest = content.slice(PREFIX.length);
+  if (content.startsWith("?")) {
+    const rest = content.slice(1);
     const name = rest.match(/^\S+/)?.[0];
     // Run command and finish if known, otherwise ignore.
     // The help command is special and lists all other existing commands.
