@@ -15,24 +15,11 @@ export default (/** @type {import('plop').NodePlopAPI} */ plop) => {
           return "name should match /^[a-z]+$/";
         },
       },
-      {
-        type: "list",
-        name: "category",
-        message: "command category",
-        default: 0,
-        choices: [
-          // TODO add more categories as needed
-          { name: "Dev", value: "dev" },
-          { name: "Help", value: "help" },
-          { name: "Moderation", value: "moderation" },
-          { name: "Fun", value: "fun" },
-        ],
-      },
     ],
     actions: [
       {
         type: "add",
-        path: "src/events/message/commands/{{category}}/{{name}}.ts",
+        path: "src/commands/{{name}}.ts",
         templateFile: "templates/command.ts.hbs",
       },
     ],
@@ -56,7 +43,7 @@ export default (/** @type {import('plop').NodePlopAPI} */ plop) => {
     actions: [
       {
         type: "add",
-        path: "src/events/message/handlers/{{name}}.ts",
+        path: "src/events/messageCreate/handlers/{{name}}.ts",
         templateFile: "templates/message-handler.ts.hbs",
       },
     ],

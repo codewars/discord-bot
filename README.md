@@ -79,7 +79,7 @@ After confirming that the bot works as expected, make changes to the local copy 
 
 Run `npx plop command` to generate boilerplate. You will be asked to enter the name of the command (lowercase English letters only) which should be a verb and select an associated category.
 
-If your command belongs to a category that does not exist yet, stop the command generation by pressing `Ctrl-C`, then modify `plopfile.ts` as appropriate to add your category and re-run `npx plop command`.
+If your command belongs to a category that does not exist yet, stop the command generation by pressing `Ctrl-C`, then modify `plopfile.mjs` as appropriate to add your category and re-run `npx plop command`.
 
 ### Adding a new message handler
 
