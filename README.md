@@ -15,28 +15,63 @@ Feedback is appreciated (Discord or GitHub issues/discussions).
 
 ## Configuration
 
-The following environment variables are used:
+The following environment variables are required:
 
-- `BOT_TOKEN` (required): The token used to log in.
-- `COMMAND_PREFIX`: The prefix used to identify commands. Defaults to `?`.
+- `BOT_TOKEN`: The token used to log in.
+- `CLIENT_ID`: The ID of the application associated with the bot.
+- `GUILD_ID`: The ID of the server where slash commands should be registered.
 
 Use `.env.development` (gitignored) to configure these variables.
 
-## Developement Setup
+## Development Setup
 
 > NOTE: Please discuss with us first before adding new features to avoid wasting your time.
 
-Before working on this repo, you should already have [set up a bot account](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot) and [added it to your development server](https://discordjs.guide/preparations/adding-your-bot-to-servers.html). In order to mimic the Codewars Discord server in your development server, you may also wish to add appropriate roles such as `@admin` and `@mods`, as well as common channels such as `#help-solve`.
+Before working on this repo, you should already have [set up a bot account](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot) and [added it to your development server](https://discordjs.guide/preparations/adding-your-bot-to-servers.html), with at least the following permissions:
+
+- `applications.commands`: Enables the use of slash commands
+- `bot`: Enables your application to join the server as a bot
+  - `SEND_MESSAGES`: Enables your bot to send messages to channels
+  - `MANAGE_MESSAGES`: Enables your bot to edit server messages and reactions
+
+In order to mimic the Codewars Discord server in your development server, you may also wish to add appropriate roles such as `@admin`, `@mods` and `@power-users`, as well as common channels such as `#help-solve` and `#bot-playground`.
 
 ### Making Changes
 
-After forking this repo and cloning your fork to your local development environment:
+1. Fork this repo
+1. Clone the fork to your local development environment, assuming `GITHUB_USERNAME` is set to your GitHub username:
 
-1. Change directory to the root of this repo: `$ cd /path/to/your/discord-bot`
-1. Install dependencies and compile TypeScript: `$ npm install`
-1. Start TypeScript compiler process to recompile on change: `$ npm run build:watch`
-1. Copy `.env.example` to `.env.development` and set `BOT_TOKEN` to [your token](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token).
-1. In a new terminal session, run the bot with: `$ npm start`
+   ```bash
+   $ git clone git@github.com:"$GITHUB_USERNAME"/discord-bot.git
+   ```
+
+1. Make this project your working directory
+1. Install dependencies and compile TypeScript
+
+   ```bash
+   $ npm install
+   ```
+
+1. Start TypeScript compiler process to recompile on change:
+
+   ```bash
+   $ npm run build:watch
+   ```
+
+1. In a new terminal session, copy `.env.example` to `.env.development`:
+
+   ```bash
+   $ cp .env.example .env.development
+   ```
+
+1. In `.env.development`:
+   - Set `BOT_TOKEN` to your [bot token](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token)
+   - Set `CLIENT_ID` and `GUILD_ID` to your [application ID and server ID](https://support-dev.discord.com/hc/en-us/articles/360028717192-Where-can-I-find-my-Application-Team-Server-ID-), respectively
+1. Start the bot:
+
+   ```bash
+   $ npm start
+   ```
 
 After confirming that the bot works as expected, make changes to the local copy of your fork as appropriate and test your changes by restarting the bot.
 
