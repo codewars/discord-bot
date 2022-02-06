@@ -40,8 +40,7 @@ bot.on("interactionCreate", onCommand);
     if (!guild) throw new Error("Failed to fetch the current guild");
     for (const registeredCommand of registeredCommands) {
       const command = await guild.commands.fetch(registeredCommand.id);
-      await command.permissions.set({ permissions: [] });
-      await command.permissions.add({ permissions: commands[registeredCommand.name].permissions });
+      await command.permissions.set({ permissions: commands[registeredCommand.name].permissions });
     }
   } catch (error) {
     console.error(error);
