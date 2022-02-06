@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, ApplicationCommandPermissionData } from "discord.js";
 import {
   SlashCommandBuilder,
   blockQuote,
@@ -11,6 +11,9 @@ import {
   strikethrough,
   underscore,
 } from "@discordjs/builders";
+import { fromEnv } from "../config";
+
+const config = fromEnv();
 
 const formats: { [k: string]: (s: string) => string } = {
   blockQuote,
@@ -27,6 +30,7 @@ const formats: { [k: string]: (s: string) => string } = {
 export const data = new SlashCommandBuilder()
   .setName("echo")
   .setDescription("Replies with your input, optionally formatted")
+  .setDefaultPermission(false)
   .addStringOption((option) =>
     option.setName("input").setDescription("The input to echo back").setRequired(true)
   )
@@ -37,6 +41,16 @@ export const data = new SlashCommandBuilder()
       .addChoices(Object.keys(formats).map((k) => [k, k]))
   )
   .toJSON();
+
+let permissions: ApplicationCommandPermissionData[] = [];
+if (config.ROLE_EVERYONE) {
+  permissions.push({
+    id: config.ROLE_EVERYONE,
+    type: "ROLE",
+    permission: true,
+  });
+}
+export { permissions };
 
 export const call = async (interaction: CommandInteraction) => {
   const input = interaction.options.getString("input", true);

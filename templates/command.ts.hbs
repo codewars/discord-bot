@@ -1,11 +1,25 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, ApplicationCommandPermissionData } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { fromEnv } from "../config";
+
+const config = fromEnv();
 
 // {{name}}
 export const data = new SlashCommandBuilder()
   .setName("{{name}}")
   .setDescription("Description for command {{name}}")
+  .setDefaultPermission(false)
   .toJSON();
+
+let permissions: ApplicationCommandPermissionData[] = [];
+if (config.ROLE_EVERYONE) {
+  permissions.push({
+    id: config.ROLE_EVERYONE,
+    type: 'ROLE',
+    permission: true
+  });
+}
+export { permissions };
 
 export const call = async (interaction: CommandInteraction) => {
   // TODO don't forget to include this module in `commands` in `src/commands/index.ts`

@@ -15,11 +15,15 @@ Feedback is appreciated (Discord or GitHub issues/discussions).
 
 ## Configuration
 
-The following environment variables are required:
+The following environment variables are required for the bot to run:
 
 - `BOT_TOKEN`: The token used to log in.
 - `CLIENT_ID`: The ID of the application associated with the bot.
 - `GUILD_ID`: The ID of the server where slash commands should be registered.
+
+The following environment variables are recommended, since some slash commands may not be available without them:
+
+- `ROLE_EVERYONE`: The ID of the `@everyone` role in the guild where the bot is registered.
 
 Use `.env.development` (gitignored) to configure these variables.
 
@@ -67,6 +71,7 @@ In order to mimic the Codewars Discord server in your development server, you ma
 1. In `.env.development`:
    - Set `BOT_TOKEN` to your [bot token](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token)
    - Set `CLIENT_ID` and `GUILD_ID` to your [application ID and server ID](https://support-dev.discord.com/hc/en-us/articles/360028717192-Where-can-I-find-my-Application-Team-Server-ID-), respectively
+   - (Recommended) Set `ROLE_EVERYONE` to the [ID of the `@everyone` role in the guild where the bot is registered](https://anidiots.guide/understanding/roles/)
 1. Start the bot:
 
    ```bash

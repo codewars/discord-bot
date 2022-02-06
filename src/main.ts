@@ -1,7 +1,7 @@
 import { Client, Intents } from "discord.js";
 
 import { fromEnv } from "./config";
-import { updateCommands } from "./commands";
+import { updateCommands, commands } from "./commands";
 import { onCommand, onMessageCreate, makeOnReady } from "./events";
 
 const config = fromEnv();
@@ -31,14 +31,22 @@ bot.on("interactionCreate", onCommand);
 (async () => {
   try {
     console.log("Updating application (/) commands");
-    await updateCommands(config);
+    const registeredCommands = await updateCommands(config);
     console.log("Updated application (/) commands");
+    await bot.login(config.BOT_TOKEN);
+    if (!config.ROLE_EVERYONE)
+      console.warn("ROLE_EVERYONE is unset; some slash commands may not be available");
+    const guild = bot.guilds.cache.get(config.GUILD_ID);
+    if (!guild) throw new Error("Failed to fetch the current guild");
+    for (const registeredCommand of registeredCommands) {
+      const command = await guild.commands.fetch(registeredCommand.id);
+      await command.permissions.set({ permissions: [] });
+      await command.permissions.add({ permissions: commands[registeredCommand.name].permissions });
+    }
   } catch (error) {
     console.error(error);
     console.error("Failed to register commands. Aborting.");
     // Prevent the bot from running with outdated commands data.
     process.exit(1);
   }
-
-  await bot.login(config.BOT_TOKEN);
 })();

@@ -1,10 +1,14 @@
 // A subcommand example
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, ApplicationCommandPermissionData } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { fromEnv } from "../config";
+
+const config = fromEnv();
 
 export const data = new SlashCommandBuilder()
   .setName("info")
   .setDescription("Replies with info")
+  .setDefaultPermission(false)
   .addSubcommand((sub) =>
     sub
       .setName("user")
@@ -13,6 +17,16 @@ export const data = new SlashCommandBuilder()
   )
   .addSubcommand((sub) => sub.setName("server").setDescription("Info about the server"))
   .toJSON();
+
+let permissions: ApplicationCommandPermissionData[] = [];
+if (config.ROLE_EVERYONE) {
+  permissions.push({
+    id: config.ROLE_EVERYONE,
+    type: "ROLE",
+    permission: true,
+  });
+}
+export { permissions };
 
 export const call = async (interaction: CommandInteraction) => {
   switch (interaction.options.getSubcommand()) {

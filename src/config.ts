@@ -30,6 +30,12 @@ export const fromEnv = () => {
           "The server id. See https://support-dev.discord.com/hc/en-us/articles/360028717192-Where-can-I-find-my-Application-Team-Server-ID-",
         schema: z.string().nonempty(),
       },
+      // Recommended, since some slash commands may not be available if not set
+      ROLE_EVERYONE: {
+        description:
+          "The ID for the @everyone role. See https://anidiots.guide/understanding/roles/",
+        schema: z.string().nullable(),
+      },
     });
   } catch (e) {
     if (e instanceof Error) {

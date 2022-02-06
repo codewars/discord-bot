@@ -1,5 +1,8 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, ApplicationCommandPermissionData } from "discord.js";
 import { SlashCommandBuilder, hyperlink, hideLinkEmbed, userMention } from "@discordjs/builders";
+import { fromEnv } from "../config";
+
+const config = fromEnv();
 
 const LINKS: { [k: string]: { description: string; url: string } } = {
   docs: {
@@ -44,6 +47,7 @@ const LINKS: { [k: string]: { description: string; url: string } } = {
 export const data = new SlashCommandBuilder()
   .setName("link")
   .setDescription("Link to a given topic")
+  .setDefaultPermission(false)
   .addStringOption((option) =>
     option
       .setName("topic")
@@ -55,6 +59,16 @@ export const data = new SlashCommandBuilder()
     option.setName("target").setDescription("Direct the specified user to the given link")
   )
   .toJSON();
+
+let permissions: ApplicationCommandPermissionData[] = [];
+if (config.ROLE_EVERYONE) {
+  permissions.push({
+    id: config.ROLE_EVERYONE,
+    type: "ROLE",
+    permission: true,
+  });
+}
+export { permissions };
 
 export const call = async (interaction: CommandInteraction) => {
   const topic = interaction.options.getString("topic", true);
