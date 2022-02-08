@@ -1,5 +1,15 @@
-import { RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord-api-types/v9";
-import { CommandInteraction } from "discord.js";
+import {
+  RESTPostAPIApplicationCommandsJSONBody,
+  RESTPutAPIApplicationGuildCommandsResult,
+  Routes,
+} from "discord-api-types/v9";
+import {
+  Client,
+  CommandInteraction,
+  Guild,
+  GuildApplicationCommandPermissionData,
+  ApplicationCommandPermissionData,
+} from "discord.js";
 import { REST } from "@discordjs/rest";
 
 import { Config } from "../config";
@@ -13,6 +23,9 @@ export type Command = {
   data: RESTPostAPIApplicationCommandsJSONBody;
   // Handler.
   call: (interaction: CommandInteraction) => Promise<void>;
+  // Required roles to use this command.
+  // Ignored unless `data.default_permission` is `false`.
+  allowedRoles?: string[];
 };
 
 export const commands: { [k: string]: Command } = {
@@ -22,21 +35,58 @@ export const commands: { [k: string]: Command } = {
 };
 
 // The caller is responsible for catching any error thrown
-export const updateCommands = async (config: Config) => {
+export const updateCommands = async (client: Client, config: Config) => {
+  const guild = client.guilds.cache.get(config.GUILD_ID);
+  if (!guild) throw new Error("Failed to get the current guild");
+
   const rest = new REST({ version: "9" }).setToken(config.BOT_TOKEN);
   const body = Object.values(commands).map((c) => c.data);
   // Global commands are cached for one hour.
   // Guild commands update instantly.
   // discord.js recommends guild command when developing and global in production.
   // For now, always use guild commands because our bot is only added to our server.
-  await rest.put(Routes.applicationGuildCommands(config.CLIENT_ID, config.GUILD_ID), {
-    body,
-  });
-  // Ideally, we shouldn't show a command if the user cannot use it.
-  // If we decide to use permissions, the response for PUT contains command ids.
-  // Restricted commands should have default permission false.
-  // Then explicitly allow certain roles to use it.
-  // If a required config is missing, we can skip registering the command and show a warning.
-  // const fullPermissions = [{id: commandId, permissions: [{type: "ROLE", permission: true, id: config.MODS_ID}]}];
-  // client.guilds.cache.get(config.GUILD_ID)?.commands?.permissions?.set({ fullPermissions });
+  const result = await rest.put(
+    Routes.applicationGuildCommands(config.CLIENT_ID, config.GUILD_ID),
+    {
+      body,
+    }
+  );
+  await setPermissions(guild, result as RESTPutAPIApplicationGuildCommandsResult);
+};
+
+// Enable restricted commands for the allowed roles.
+// Warn if none of the allowed roles are found.
+const setPermissions = async (guild: Guild, result: RESTPutAPIApplicationGuildCommandsResult) => {
+  const fullPermissions: GuildApplicationCommandPermissionData[] = [];
+  for (const cmd of result) {
+    if (cmd.default_permission !== false) continue;
+
+    const allowedRoles = commands[cmd.name].allowedRoles;
+    if (!Array.isArray(allowedRoles)) {
+      throw new Error(`/${cmd.name} is restricted without allowedRoles`);
+    }
+
+    const permissions: ApplicationCommandPermissionData[] = [];
+    for (const name of allowedRoles) {
+      const role = guild.roles.cache.find((role) => role.name === name);
+      if (role) {
+        permissions.push({ id: role.id, type: "ROLE", permission: true });
+      }
+    }
+
+    if (permissions.length > 0) {
+      fullPermissions.push({ id: cmd.id, permissions });
+    } else {
+      console.warn(
+        `/${cmd.name} is unusable because none of the required roles exist.`,
+        JSON.stringify(allowedRoles)
+      );
+    }
+  }
+
+  if (fullPermissions.length > 0) {
+    console.log("Setting permissions for restricted (/) commands");
+    await guild.commands.permissions.set({ fullPermissions });
+    console.log("Successfully set permissions for restricted (/) commands");
+  }
 };
