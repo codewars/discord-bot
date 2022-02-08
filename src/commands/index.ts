@@ -23,9 +23,9 @@ export type Command = {
   data: RESTPostAPIApplicationCommandsJSONBody;
   // Handler.
   call: (interaction: CommandInteraction) => Promise<void>;
-  // Required roles to use this command.
+  // Roles authorized to use this command.
   // Ignored unless `data.default_permission` is `false`.
-  allowedRoles?: string[];
+  authorizedRoles?: string[];
 };
 
 export const commands: { [k: string]: Command } = {
@@ -61,13 +61,13 @@ const setPermissions = async (guild: Guild, result: RESTPutAPIApplicationGuildCo
   for (const cmd of result) {
     if (cmd.default_permission !== false) continue;
 
-    const allowedRoles = commands[cmd.name].allowedRoles;
-    if (!Array.isArray(allowedRoles)) {
-      throw new Error(`/${cmd.name} is restricted without allowedRoles`);
+    const { authorizedRoles } = commands[cmd.name];
+    if (!Array.isArray(authorizedRoles)) {
+      throw new Error(`/${cmd.name} is restricted without authorizedRoles`);
     }
 
     const permissions: ApplicationCommandPermissionData[] = [];
-    for (const name of allowedRoles) {
+    for (const name of authorizedRoles) {
       const role = guild.roles.cache.find((role) => role.name === name);
       if (role) {
         permissions.push({ id: role.id, type: "ROLE", permission: true });
@@ -78,8 +78,8 @@ const setPermissions = async (guild: Guild, result: RESTPutAPIApplicationGuildCo
       fullPermissions.push({ id: cmd.id, permissions });
     } else {
       console.warn(
-        `/${cmd.name} is unusable because none of the required roles exist.`,
-        JSON.stringify(allowedRoles)
+        `/${cmd.name} is unusable because none of the authorized roles exist.`,
+        JSON.stringify(authorizedRoles)
       );
     }
   }
