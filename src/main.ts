@@ -30,8 +30,9 @@ bot.on("interactionCreate", onCommand);
 // Update commands and join
 (async () => {
   try {
+    await bot.login(config.BOT_TOKEN);
     console.log("Updating application (/) commands");
-    await updateCommands(config);
+    await updateCommands(bot, config);
     console.log("Updated application (/) commands");
   } catch (error) {
     console.error(error);
@@ -39,6 +40,4 @@ bot.on("interactionCreate", onCommand);
     // Prevent the bot from running with outdated commands data.
     process.exit(1);
   }
-
-  await bot.login(config.BOT_TOKEN);
 })();
