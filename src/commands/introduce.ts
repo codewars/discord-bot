@@ -8,7 +8,7 @@ const channelTexts: Map<string, string> = getTexts("introduce", channels);
 // introduce
 export const data = new SlashCommandBuilder()
   .setName("introduce")
-  .setDescription("Description for command introduce")
+  .setDescription("Introduce the user to the specified channel")
   .setDefaultPermission(false)
   .addUserOption((option) =>
     option
@@ -32,7 +32,11 @@ export const call = async (interaction: CommandInteraction) => {
   const helpText = channelTexts.get(channel.name);
   if (!helpText) {
     await interaction.reply({
-      content: "No help text available for the given channel",
+      content: `No help text available for the given channel
+	
+Help text is available for the following channels:
+
+${channels.map((channel) => `- **#${channel}**`).join("\n")}`,
       ephemeral: true,
     });
     return;
