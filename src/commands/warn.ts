@@ -2,22 +2,17 @@ import { CommandInteraction } from "discord.js";
 import { SlashCommandBuilder, userMention, hideLinkEmbed } from "@discordjs/builders";
 import { getTexts } from "../common";
 
-const CONDUCT = "conduct";
-const CONTENT = "content";
-const SPAM = "spam";
-type Reason = typeof CONDUCT | typeof CONTENT | typeof SPAM;
-
 const reasons = [
   {
-    name: CONDUCT,
+    name: "conduct",
     description: "Poor conduct: harassment, witch hunting, sexism, etc.",
   },
   {
-    name: CONTENT,
+    name: "content",
     description: "Offensive / NSFW content: nudity, sex, violence, etc.",
   },
   {
-    name: SPAM,
+    name: "spam",
     description:
       "Spam / phishing: unauthorized server invites, advertisements, malicious links etc.",
   },
@@ -49,20 +44,20 @@ export const authorizedRoles = ["admin", "mods"];
 
 export const call = async (interaction: CommandInteraction) => {
   const user = interaction.options.getUser("user", true);
-  const reason = interaction.options.getString("reason", true) as Reason;
-  try {
-    const reply = warnTexts.get(reason);
-    if (!reply) {
-      await interaction.reply({
-        content: `Could not get the text for reason "${reason}"
+  const reason = interaction.options.getString("reason", true);
+  const reply = warnTexts.get(reason);
+  if (!reply) {
+    await interaction.reply({
+      content: `Could not get the text for reason "${reason}"
 
 Text is available for the following reasons:
 
 ${reasons.map((reason) => `- ${reason.name}`).join("\n")}`,
-        ephemeral: true,
-      });
-      return;
-    }
+      ephemeral: true,
+    });
+    return;
+  }
+  try {
     const dm = await user.createDM();
     await dm.send(reply);
     await interaction.reply(
