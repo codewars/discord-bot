@@ -1,42 +1,32 @@
-import { TextChannel } from "discord.js";
-import { z, ZodError } from "zod";
-import { Message, CommandArg, word } from "../types";
-import { getUser, UserNotFoundError } from "../../../../codewars";
-
-const USAGE: string =
-  "Usage: `?rankup [<username> --target={username|rank} --language={languageID} --mode={least|each|spread} --limit={1-8[kyu]}]`";
-const REDIRECT: string = "This command is only available in channel **#bot-playground**";
-
-/*
-`?rankup` calculates the number of katas of each rank required for a user to rank up.
-This command is just for fun, however should increase competition between users,
-and (hopefully) increase motivation.
-
-If no username is passed, server nickname of user is taken instead.
-
-Options:
-  <username>   The username to check. Defaults to users discord server nickname
-  --target=    The rank to reach, or a username of a user to overtake. Defaults to users next rank
-  --language=  The language to inspect. Defaults to "overall"
-  --mode=      Calculation mode.
-                  Least favours 1kyus for least overall katas.
-                  Each finds number of katas per rank individually
-                  Spread (default) prioritises high katas, but also distributes points to lower ones
-  --limit=     The max rank to use in calculations ([1-8]kyu)
-  --help       Display USAGE
-*/
+import { CommandInteraction, GuildMember } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { ZodError } from "zod";
+import { getUser, UserNotFoundError } from "../codewars";
 
 const LEAST = "least";
 const EACH = "each";
 const SPREAD = "spread";
 type Mode = typeof LEAST | typeof EACH | typeof SPREAD;
 
-function isMode(value: unknown): value is Mode {
-  return typeof value == "string" && (value == LEAST || value == EACH || value == SPREAD);
-}
+const modes = [
+  {
+    name: LEAST,
+    description: "Complete the fewest possible Kata",
+  },
+  {
+    name: EACH,
+    description: "Complete only Kata of the same rank",
+  },
+  {
+    name: SPREAD,
+    description: "Complete a balanced range of Kata (default)",
+  },
+];
 
 const DEFAULTMODE = SPREAD;
 const SPREADWEIGHT = 0.6; // used for Spread mode
+
+const limits = ["1kyu", "2kyu", "3kyu", "4kyu", "5kyu", "6kyu", "7kyu", "8kyu"];
 
 // https://docs.codewars.com/gamification/ranks
 // 3-8 dan added speculatively, based on trend
@@ -76,7 +66,7 @@ function formatResult(
   ranks: [string, string][],
   target: string,
   mode: Mode,
-  lang?: string
+  lang: string | null
 ) {
   const maxLen = Math.max(...ranks.map((v) => String(v[0]).length));
   const rankStr =
@@ -113,8 +103,8 @@ export type Options = {
 async function getNextRank(
   score: number,
   user: string,
-  targ?: string,
-  lang?: string
+  targ: string | null,
+  lang: string | null
 ): Promise<[string, number] | string> {
   // If target is a rank
   if (targ && /^[1-8](?:kyu|dan)$/.test(targ)) {
@@ -143,56 +133,98 @@ async function getNextRank(
   return [nextRank, remaining];
 }
 
-export default async function (message: Message, args: CommandArg[], opts: Options) {
-  // Helper function
-  const send = (msg: string) => {
-    message.channel.send(msg);
-  };
+// rankup
+export const data = new SlashCommandBuilder()
+  .setName("rankup")
+  .setDescription("Find out how many Kata to complete to advance to the next rank, and more")
+  .addStringOption((option) =>
+    option
+      .setName("username")
+      .setDescription("The Codewars username to query rankup statistics for")
+  )
+  .addStringOption((option) =>
+    option.setName("target").setDescription("The target user or rank to reach")
+  )
+  .addStringOption((option) =>
+    option
+      .setName("language")
+      .setDescription("The programming language ID to query rankup statistics for")
+  )
+  .addStringOption((option) =>
+    option
+      .setName("mode")
+      .setDescription("Choose your preferred method to reach your target")
+      .addChoices(modes.map((mode) => [mode.description, mode.name]))
+  )
+  .addStringOption((option) =>
+    option
+      .setName("limit")
+      .setDescription("Don't suggest Kata above this rank")
+      .addChoices(limits.map((limit) => [limit, limit]))
+  )
+  .toJSON();
 
-  // If current channel is not #bot-playground, redirect them to that channel
-  if ((message.channel as TextChannel).name !== "bot-playground") return send(REDIRECT);
-
-  let username: string;
-  if (args.length == 0) {
-    if (!message.member?.displayName) return;
-    username = message.member.displayName;
-  } else {
-    // Input validation
-    const result = z.tuple([word()]).safeParse(args);
-    if (!result.success) {
-      message.reply(USAGE);
+export const call = async (interaction: CommandInteraction) => {
+  let username = interaction.options.getString("username");
+  if (!username) {
+    const member = interaction.member;
+    if (!member) {
+      await interaction.reply({
+        content: "Failed to fetch the name of the current user",
+        ephemeral: true,
+      });
       return;
     }
-    [username] = result.data;
+    const displayName = member instanceof GuildMember ? member.displayName : member.nick;
+    if (!displayName) {
+      await interaction.reply({
+        content: "Failed to fetch the name of the current user",
+        ephemeral: true,
+      });
+      return;
+    }
+    username = displayName;
   }
-
-  // If help option set, simply reply with usage info
-  if (opts.help !== undefined) return send(USAGE);
-
-  // Get mode
-  const mode = isMode(opts.mode) ? opts.mode : DEFAULTMODE;
-
-  // Validate limit
-  if (opts.limit && !/^[1-8]$/.test(opts.limit)) return send("Invalid limit");
+  const target = interaction.options.getString("target");
+  const language = interaction.options.getString("language");
+  let mode = interaction.options.getString("mode");
+  if (!mode) mode = DEFAULTMODE;
+  let limit = interaction.options.getString("limit");
+  if (!limit) limit = "1kyu";
 
   // Get user data
   let score: number;
   try {
-    score = await getUser(username, opts.language);
+    score = await getUser(username, language);
   } catch (err) {
-    return send(errorMessage(err));
+    await interaction.reply({
+      content: errorMessage(err),
+      ephemeral: true,
+    });
+    return;
   }
-  if (score == 0)
-    return send(`${username} has not started training \`${opts.language}\`, or the language ID is invalid.
-See <https://docs.codewars.com/languages/> to find the correct ID.`);
+  if (score == 0) {
+    await interaction.reply({
+      content: `${username} has not started training \`${language}\`, or the language ID is invalid.
+See <https://docs.codewars.com/languages/> to find the correct ID.`,
+      ephemeral: true,
+    });
+    return;
+  }
 
-  const nextRankScore = await getNextRank(score, username, opts.target, opts.language);
-  if (typeof nextRankScore == "string") return send(nextRankScore);
+  const nextRankScore = await getNextRank(score, username, target, language);
+  if (typeof nextRankScore == "string") {
+    await interaction.reply({
+      content: nextRankScore,
+      ephemeral: true,
+    });
+    return;
+  }
   let [nextRank, remaining]: [string, number] = nextRankScore;
 
   // Get number of each kata required to reach the target
   const rankNums: [string, string][] = Object.entries(RANKPOINTS)
-    .filter(([k]) => Number(k[0]) >= Number(String(opts.limit ?? 1)[0]))
+    .filter(([k]) => Number(k[0]) >= Number(String(limit)[0]))
     .sort((a, b) => b[1] - a[1])
     .map(([rank, points]) => {
       if (points > remaining && rank != "8kyu") return ["0", ""];
@@ -208,5 +240,8 @@ See <https://docs.codewars.com/languages/> to find the correct ID.`);
     });
 
   // Format results and send
-  return send(formatResult(username, rankNums, nextRank, mode, opts.language));
-}
+  await interaction.reply({
+    content: formatResult(username, rankNums, nextRank, mode as Mode, language),
+    ephemeral: true,
+  });
+};

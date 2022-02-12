@@ -19,6 +19,7 @@ import * as info from "./info";
 import * as link from "./link";
 import * as introduce from "./introduce";
 import * as warn from "./warn";
+import * as rankup from "./rankup";
 
 export type Command = {
   // Data to send when registering.
@@ -36,6 +37,7 @@ export const commands: { [k: string]: Command } = {
   link,
   introduce,
   warn,
+  rankup,
 };
 
 // The caller is responsible for catching any error thrown
