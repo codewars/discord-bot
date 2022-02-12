@@ -168,14 +168,7 @@ export const call = async (interaction: CommandInteraction) => {
   let username = interaction.options.getString("username");
   if (!username) {
     const member = interaction.member;
-    if (!member) {
-      await interaction.reply({
-        content: "Failed to fetch the name of the current user",
-        ephemeral: true,
-      });
-      return;
-    }
-    const displayName = member instanceof GuildMember ? member.displayName : member.nick;
+    const displayName = member instanceof GuildMember ? member.displayName : member?.nick;
     if (!displayName) {
       await interaction.reply({
         content: "Failed to fetch the name of the current user",
