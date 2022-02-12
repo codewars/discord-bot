@@ -205,7 +205,7 @@ export const call = async (interaction: CommandInteraction) => {
   } catch (err) {
     await interaction.reply({
       content: errorMessage(err),
-      ephemeral,
+      ephemeral: true,
     });
     return;
   }
