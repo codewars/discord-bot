@@ -187,10 +187,8 @@ export const call = async (interaction: CommandInteraction) => {
   }
   const target = interaction.options.getString("target");
   const language = interaction.options.getString("language");
-  let mode = interaction.options.getString("mode");
-  if (!mode) mode = DEFAULTMODE;
-  let limit = interaction.options.getString("limit");
-  if (!limit) limit = "1kyu";
+  const mode = interaction.options.getString("mode") || DEFAULT_MODE;
+  const limit = interaction.options.getString("limit") || "1kyu";
 
   // Get user data
   let score: number;
