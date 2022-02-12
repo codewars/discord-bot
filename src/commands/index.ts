@@ -23,7 +23,7 @@ import * as rankup from "./rankup";
 
 export type Command = {
   // Data to send when registering.
-  data: RESTPostAPIApplicationCommandsJSONBody;
+  data: () => Promise<RESTPostAPIApplicationCommandsJSONBody>;
   // Handler.
   call: (interaction: CommandInteraction) => Promise<void>;
   // Roles authorized to use this command.
@@ -46,7 +46,7 @@ export const updateCommands = async (client: Client, config: Config) => {
   if (!guild) throw new Error("Failed to get the current guild");
 
   const rest = new REST({ version: "9" }).setToken(config.BOT_TOKEN);
-  const body = Object.values(commands).map((c) => c.data);
+  const body = await Promise.all(Object.values(commands).map((c) => c.data()));
   // Global commands are cached for one hour.
   // Guild commands update instantly.
   // discord.js recommends guild command when developing and global in production.

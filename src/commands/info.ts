@@ -2,17 +2,18 @@
 import { CommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
-export const data = new SlashCommandBuilder()
-  .setName("info")
-  .setDescription("Replies with info")
-  .addSubcommand((sub) =>
-    sub
-      .setName("user")
-      .setDescription("Info about a user")
-      .addUserOption((o) => o.setName("user").setDescription("The user"))
-  )
-  .addSubcommand((sub) => sub.setName("server").setDescription("Info about the server"))
-  .toJSON();
+export const data = async () =>
+  new SlashCommandBuilder()
+    .setName("info")
+    .setDescription("Replies with info")
+    .addSubcommand((sub) =>
+      sub
+        .setName("user")
+        .setDescription("Info about a user")
+        .addUserOption((o) => o.setName("user").setDescription("The user"))
+    )
+    .addSubcommand((sub) => sub.setName("server").setDescription("Info about the server"))
+    .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
   switch (interaction.options.getSubcommand()) {

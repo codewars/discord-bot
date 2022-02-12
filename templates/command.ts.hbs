@@ -2,10 +2,11 @@ import { CommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 // {{name}}
-export const data = new SlashCommandBuilder()
-  .setName("{{name}}")
-  .setDescription("Description for command {{name}}")
-  .toJSON();
+export const data = async () =>
+  new SlashCommandBuilder()
+    .setName("{{name}}")
+    .setDescription("Description for command {{name}}")
+    .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
   // TODO don't forget to include this module in `commands` in `src/commands/index.ts`

@@ -24,21 +24,22 @@ const warnTexts: Map<string, string> = getTexts(
 );
 
 // warn
-export const data = new SlashCommandBuilder()
-  .setName("warn")
-  .setDescription("Warn the user for violation of server rules")
-  .setDefaultPermission(false)
-  .addUserOption((option) =>
-    option.setName("user").setDescription("The user who violated server rules").setRequired(true)
-  )
-  .addStringOption((option) =>
-    option
-      .setName("reason")
-      .setDescription("The reason the specified user violated server rules")
-      .setRequired(true)
-      .addChoices(reasons.map((reason) => [reason.description, reason.name]))
-  )
-  .toJSON();
+export const data = async () =>
+  new SlashCommandBuilder()
+    .setName("warn")
+    .setDescription("Warn the user for violation of server rules")
+    .setDefaultPermission(false)
+    .addUserOption((option) =>
+      option.setName("user").setDescription("The user who violated server rules").setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("reason")
+        .setDescription("The reason the specified user violated server rules")
+        .setRequired(true)
+        .addChoices(reasons.map((reason) => [reason.description, reason.name]))
+    )
+    .toJSON();
 
 export const authorizedRoles = ["admin", "mods"];
 
