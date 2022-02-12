@@ -213,7 +213,7 @@ export const call = async (interaction: CommandInteraction) => {
     await interaction.reply({
       content: `${username} has not started training \`${language}\`, or the language ID is invalid.
 See <https://docs.codewars.com/languages/> to find the correct ID.`,
-      ephemeral,
+      ephemeral: true,
     });
     return;
   }
