@@ -41,20 +41,21 @@ const LINKS: { [k: string]: { description: string; url: string } } = {
 };
 
 // link
-export const data = new SlashCommandBuilder()
-  .setName("link")
-  .setDescription("Link to a given topic")
-  .addStringOption((option) =>
-    option
-      .setName("topic")
-      .setDescription("The topic to link to")
-      .setRequired(true)
-      .addChoices(Object.keys(LINKS).map((k) => [LINKS[k].description, k]))
-  )
-  .addUserOption((option) =>
-    option.setName("target").setDescription("Direct the specified user to the given link")
-  )
-  .toJSON();
+export const data = async () =>
+  new SlashCommandBuilder()
+    .setName("link")
+    .setDescription("Link to a given topic")
+    .addStringOption((option) =>
+      option
+        .setName("topic")
+        .setDescription("The topic to link to")
+        .setRequired(true)
+        .addChoices(Object.keys(LINKS).map((k) => [LINKS[k].description, k]))
+    )
+    .addUserOption((option) =>
+      option.setName("target").setDescription("Direct the specified user to the given link")
+    )
+    .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
   const topic = interaction.options.getString("topic", true);

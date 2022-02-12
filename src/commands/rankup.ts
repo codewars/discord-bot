@@ -136,38 +136,39 @@ async function getNextRank(
 }
 
 // rankup
-export const data = new SlashCommandBuilder()
-  .setName("rankup")
-  .setDescription("Find out how many Kata to complete to advance to the next rank, and more")
-  .addStringOption((option) =>
-    option
-      .setName("username")
-      .setDescription("The Codewars username to query rankup statistics for")
-  )
-  .addStringOption((option) =>
-    option.setName("target").setDescription("The target user or rank to reach")
-  )
-  .addStringOption((option) =>
-    option
-      .setName("language")
-      .setDescription("The programming language ID to query rankup statistics for")
-  )
-  .addStringOption((option) =>
-    option
-      .setName("mode")
-      .setDescription("Choose your preferred method to reach your target")
-      .addChoices(modes.map((mode) => [mode.description, mode.name]))
-  )
-  .addStringOption((option) =>
-    option
-      .setName("limit")
-      .setDescription("Don't suggest Kata above this rank")
-      .addChoices(limits.map((limit) => [limit, limit]))
-  )
-  .addBooleanOption((option) =>
-    option.setName("ephemeral").setDescription("Don't show rank up statistics to others")
-  )
-  .toJSON();
+export const data = async () =>
+  new SlashCommandBuilder()
+    .setName("rankup")
+    .setDescription("Find out how many Kata to complete to advance to the next rank, and more")
+    .addStringOption((option) =>
+      option
+        .setName("username")
+        .setDescription("The Codewars username to query rankup statistics for")
+    )
+    .addStringOption((option) =>
+      option.setName("target").setDescription("The target user or rank to reach")
+    )
+    .addStringOption((option) =>
+      option
+        .setName("language")
+        .setDescription("The programming language ID to query rankup statistics for")
+    )
+    .addStringOption((option) =>
+      option
+        .setName("mode")
+        .setDescription("Choose your preferred method to reach your target")
+        .addChoices(modes.map((mode) => [mode.description, mode.name]))
+    )
+    .addStringOption((option) =>
+      option
+        .setName("limit")
+        .setDescription("Don't suggest Kata above this rank")
+        .addChoices(limits.map((limit) => [limit, limit]))
+    )
+    .addBooleanOption((option) =>
+      option.setName("ephemeral").setDescription("Don't show rank up statistics to others")
+    )
+    .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
   let username = interaction.options.getString("username");

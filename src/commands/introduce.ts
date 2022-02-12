@@ -6,23 +6,24 @@ const channels = ["help-solve"];
 const channelTexts: Map<string, string> = getTexts("introduce", channels);
 
 // introduce
-export const data = new SlashCommandBuilder()
-  .setName("introduce")
-  .setDescription("Introduce the user to the specified channel")
-  .setDefaultPermission(false)
-  .addUserOption((option) =>
-    option
-      .setName("user")
-      .setDescription("User to introduce the specified channel to")
-      .setRequired(true)
-  )
-  .addChannelOption((option) =>
-    option
-      .setName("channel")
-      .setDescription("Channel to introduce the specified user to")
-      .setRequired(true)
-  )
-  .toJSON();
+export const data = async () =>
+  new SlashCommandBuilder()
+    .setName("introduce")
+    .setDescription("Introduce the user to the specified channel")
+    .setDefaultPermission(false)
+    .addUserOption((option) =>
+      option
+        .setName("user")
+        .setDescription("User to introduce the specified channel to")
+        .setRequired(true)
+    )
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("Channel to introduce the specified user to")
+        .setRequired(true)
+    )
+    .toJSON();
 
 export const authorizedRoles = ["admin", "mods", "power-users"];
 

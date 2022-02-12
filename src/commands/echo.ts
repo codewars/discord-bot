@@ -24,19 +24,20 @@ const formats: { [k: string]: (s: string) => string } = {
   underscore,
 };
 
-export const data = new SlashCommandBuilder()
-  .setName("echo")
-  .setDescription("Replies with your input, optionally formatted")
-  .addStringOption((option) =>
-    option.setName("input").setDescription("The input to echo back").setRequired(true)
-  )
-  .addStringOption((option) =>
-    option
-      .setName("format")
-      .setDescription("The format to use")
-      .addChoices(Object.keys(formats).map((k) => [k, k]))
-  )
-  .toJSON();
+export const data = async () =>
+  new SlashCommandBuilder()
+    .setName("echo")
+    .setDescription("Replies with your input, optionally formatted")
+    .addStringOption((option) =>
+      option.setName("input").setDescription("The input to echo back").setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("format")
+        .setDescription("The format to use")
+        .addChoices(Object.keys(formats).map((k) => [k, k]))
+    )
+    .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
   const input = interaction.options.getString("input", true);
