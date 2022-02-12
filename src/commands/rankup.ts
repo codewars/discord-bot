@@ -1,7 +1,9 @@
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ZodError } from "zod";
 import { getUser, UserNotFoundError } from "../codewars";
+
+const REDIRECT: string = "This command is only available in channel **#bot-playground**";
 
 const LEAST = "least";
 const EACH = "each";
@@ -162,6 +164,9 @@ export const data = new SlashCommandBuilder()
       .setDescription("Don't suggest Kata above this rank")
       .addChoices(limits.map((limit) => [limit, limit]))
   )
+  .addBooleanOption((option) =>
+    option.setName("ephemeral").setDescription("Don't show rank up statistics to others")
+  )
   .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
@@ -182,6 +187,16 @@ export const call = async (interaction: CommandInteraction) => {
   const language = interaction.options.getString("language");
   const mode = interaction.options.getString("mode") || DEFAULTMODE;
   const limit = interaction.options.getString("limit") || "1kyu";
+  const ephemeral = interaction.options.getBoolean("ephemeral") || false;
+
+  // Restrict command output to #bot-playground unless ephemeral is set
+  if (!ephemeral && (interaction.channel as TextChannel).name !== "bot-playground") {
+    await interaction.reply({
+      content: REDIRECT,
+      ephemeral: true,
+    });
+    return;
+  }
 
   // Get user data
   let score: number;
@@ -190,7 +205,7 @@ export const call = async (interaction: CommandInteraction) => {
   } catch (err) {
     await interaction.reply({
       content: errorMessage(err),
-      ephemeral: true,
+      ephemeral,
     });
     return;
   }
@@ -198,7 +213,7 @@ export const call = async (interaction: CommandInteraction) => {
     await interaction.reply({
       content: `${username} has not started training \`${language}\`, or the language ID is invalid.
 See <https://docs.codewars.com/languages/> to find the correct ID.`,
-      ephemeral: true,
+      ephemeral,
     });
     return;
   }
@@ -207,7 +222,7 @@ See <https://docs.codewars.com/languages/> to find the correct ID.`,
   if (typeof nextRankScore == "string") {
     await interaction.reply({
       content: nextRankScore,
-      ephemeral: true,
+      ephemeral,
     });
     return;
   }
@@ -233,6 +248,6 @@ See <https://docs.codewars.com/languages/> to find the correct ID.`,
   // Format results and send
   await interaction.reply({
     content: formatResult(username, rankNums, nextRank, mode as Mode, language),
-    ephemeral: true,
+    ephemeral,
   });
 };
