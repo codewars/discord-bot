@@ -180,7 +180,7 @@ export const call = async (interaction: CommandInteraction) => {
   }
   const target = interaction.options.getString("target");
   const language = interaction.options.getString("language");
-  const mode = interaction.options.getString("mode") || DEFAULT_MODE;
+  const mode = interaction.options.getString("mode") || DEFAULTMODE;
   const limit = interaction.options.getString("limit") || "1kyu";
 
   // Get user data
