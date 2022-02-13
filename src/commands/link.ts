@@ -65,22 +65,19 @@ export const data = async () =>
     .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
-  const maybeMention = (msg: string, target: User | null) =>
-    target
-      ? `${userMention(target.id)} ${msg}`
-      : `${msg}
-
-${italic(
-  `Note: to use this command in response to a user's query, specify the ${inlineCode(
-    "target"
-  )} option when invoking the command.`
-)}`;
   const topic = interaction.options.getString("topic", true);
   const target = interaction.options.getUser("target");
   const linkInfo = LINKS[topic];
-  const replyMsg = `See ${hyperlink(linkInfo.description, hideLinkEmbed(linkInfo.url))}`;
+  const message = `See ${hyperlink(linkInfo.description, hideLinkEmbed(linkInfo.url))}`;
   await interaction.reply({
-    content: maybeMention(replyMsg, target),
+    content: maybeMention(message, target),
     ephemeral: !target,
   });
 };
+
+const maybeMention = (msg: string, target: User | null) =>
+  target ? `${userMention(target.id)} ${msg}` : `${msg}\n\n${italic(NOTE)}`;
+
+const NOTE = `Note: to use this command in response to a user's query, specify the ${inlineCode(
+  "target"
+)} option when invoking the command.`;
