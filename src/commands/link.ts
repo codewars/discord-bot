@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, User } from "discord.js";
 import {
   SlashCommandBuilder,
   hyperlink,
@@ -65,21 +65,22 @@ export const data = async () =>
     .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
-  const topic = interaction.options.getString("topic", true);
-  const target = interaction.options.getUser("target");
-  const linkInfo = LINKS[topic];
-  let replyMsg = `See ${hyperlink(linkInfo.description, hideLinkEmbed(linkInfo.url))}`;
-  if (target) replyMsg = `${userMention(target.id)} ${replyMsg}`;
-  else
-    replyMsg = `${replyMsg}
+  const maybeMention = (msg: string, target: User | null) =>
+    target
+      ? `${userMention(target.id)} ${msg}`
+      : `${msg}
 
 ${italic(
   `Note: to use this command in response to a user's query, specify the ${inlineCode(
     "target"
   )} option when invoking the command.`
 )}`;
+  const topic = interaction.options.getString("topic", true);
+  const target = interaction.options.getUser("target");
+  const linkInfo = LINKS[topic];
+  const replyMsg = `See ${hyperlink(linkInfo.description, hideLinkEmbed(linkInfo.url))}`;
   await interaction.reply({
-    content: replyMsg,
+    content: maybeMention(replyMsg, target),
     ephemeral: !target,
   });
 };
