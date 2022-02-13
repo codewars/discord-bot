@@ -1,7 +1,8 @@
-import { CommandInteraction, GuildMember, TextChannel } from "discord.js";
+import { AutocompleteInteraction, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ZodError } from "zod";
-import { getUser, UserNotFoundError } from "../codewars";
+import { getLanguages, getUser, Language, UserNotFoundError } from "../codewars";
+import fuzzysearch from "fuzzysearch";
 
 const REDIRECT: string = "This command is only available in channel **#bot-playground**";
 
@@ -151,7 +152,8 @@ export const data = async () =>
     .addStringOption((option) =>
       option
         .setName("language")
-        .setDescription("The programming language ID to query rankup statistics for")
+        .setDescription("The programming language to query rankup statistics for")
+        .setAutocomplete(true)
     )
     .addStringOption((option) =>
       option
@@ -169,6 +171,32 @@ export const data = async () =>
       option.setName("ephemeral").setDescription("Don't show rank up statistics to others")
     )
     .toJSON();
+
+let languages: Language[] | null = null;
+export const autocomplete = async (interaction: AutocompleteInteraction) => {
+  const focused = interaction.options.data.find((opt) => opt.focused);
+  // The following shouldn't happen since "language" is the only option with autocompletion, but
+  // this can be used to detect the focused option if we have multiple autocomplete options.
+  if (focused?.name !== "language") return [];
+
+  const typed = interaction.options.getString("language");
+  // We can't show all options because we have more than 25.
+  // Discord shows "no option match your search" when returning an empty array.
+  if (!typed) return [];
+
+  // Fetch the languages once. The bot restarts at least once a day, so this should be fine for now.
+  if (!languages) languages = await getLanguages();
+
+  const ignoreCase = typed.toLowerCase() === typed;
+  const filtered = languages
+    .filter(
+      ({ id, name }) =>
+        fuzzysearch(typed, id) || fuzzysearch(typed, ignoreCase ? name.toLowerCase() : name)
+    )
+    .map(({ id, name }) => ({ name: name, value: id }));
+  // Make sure the response is 25 items or less.
+  return filtered.slice(0, 25);
+};
 
 export const call = async (interaction: CommandInteraction) => {
   let username = interaction.options.getString("username");
@@ -212,8 +240,7 @@ export const call = async (interaction: CommandInteraction) => {
   }
   if (score == 0) {
     await interaction.reply({
-      content: `${username} has not started training \`${language}\`, or the language ID is invalid.
-See <https://docs.codewars.com/languages/> to find the correct ID.`,
+      content: `${username} has not started training \`${language}\``,
       ephemeral: true,
     });
     return;
