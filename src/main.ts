@@ -2,7 +2,7 @@ import { Client, Intents } from "discord.js";
 
 import { fromEnv } from "./config";
 import { updateCommands } from "./commands";
-import { onCommand, onMessageCreate, makeOnReady } from "./events";
+import { onAutocomplete, onCommand, onMessageCreate, makeOnReady } from "./events";
 
 const config = fromEnv();
 
@@ -26,6 +26,7 @@ const bot = new Client({
 bot.once("ready", makeOnReady(bot));
 bot.on("messageCreate", onMessageCreate);
 bot.on("interactionCreate", onCommand);
+bot.on("interactionCreate", onAutocomplete);
 
 // Update commands and join
 (async () => {

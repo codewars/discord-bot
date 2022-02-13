@@ -27,3 +27,19 @@ const ERROR_MESSAGE = oneLine`
   Something went wrong!
   If the issue persists, please open an [issue](https://github.com/codewars/discord-bot/issues).
 `;
+
+// Listener for handling autocompletion of command options
+export const onAutocomplete = async <T extends CacheType>(interaction: Interaction<T>) => {
+  if (!interaction.isAutocomplete()) return;
+  const { commandName } = interaction;
+  if (!commands.hasOwnProperty(commandName)) return;
+  const command = commands[commandName];
+  if (typeof command.autocomplete !== "function") return;
+
+  try {
+    const options = await command.autocomplete(interaction);
+    await interaction.respond(options);
+  } catch (e) {
+    console.error(e);
+  }
+};

@@ -23,8 +23,14 @@ const ProfileResponse = z.object({
   }),
 });
 
+const Language = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
 type RankInfo = z.infer<typeof RankInfo>;
 type ProfileResponse = z.infer<typeof ProfileResponse>;
+export type Language = z.infer<typeof Language>;
 
 // Retrieve a users language score, or overall score if language is undefined
 // Throws error if a user is not found
@@ -41,3 +47,8 @@ export class UserNotFoundError extends Error {
     super(`Could not find user: ${user}`);
   }
 }
+
+export const getLanguages: () => Promise<Language[]> = async () => {
+  const response = await fetch("https://www.codewars.com/api/v1/languages");
+  return z.object({ data: z.array(Language) }).parse(await response.json()).data;
+};

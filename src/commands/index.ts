@@ -9,6 +9,8 @@ import {
   Guild,
   GuildApplicationCommandPermissionData,
   ApplicationCommandPermissionData,
+  AutocompleteInteraction,
+  ApplicationCommandOptionChoice,
 } from "discord.js";
 import { REST } from "@discordjs/rest";
 
@@ -26,6 +28,10 @@ export type Command = {
   data: () => Promise<RESTPostAPIApplicationCommandsJSONBody>;
   // Handler.
   call: (interaction: CommandInteraction) => Promise<void>;
+  // Autocompletion handler.
+  autocomplete?: (
+    interaction: AutocompleteInteraction
+  ) => Promise<ApplicationCommandOptionChoice[]>;
   // Roles authorized to use this command.
   // Ignored unless `data.default_permission` is `false`.
   authorizedRoles?: string[];
