@@ -1,5 +1,12 @@
-import { CommandInteraction } from "discord.js";
-import { SlashCommandBuilder, hyperlink, hideLinkEmbed, userMention } from "@discordjs/builders";
+import { CommandInteraction, User } from "discord.js";
+import {
+  SlashCommandBuilder,
+  hyperlink,
+  hideLinkEmbed,
+  userMention,
+  italic,
+  inlineCode,
+} from "@discordjs/builders";
 
 const LINKS: { [k: string]: { description: string; url: string } } = {
   docs: {
@@ -61,10 +68,16 @@ export const call = async (interaction: CommandInteraction) => {
   const topic = interaction.options.getString("topic", true);
   const target = interaction.options.getUser("target");
   const linkInfo = LINKS[topic];
-  let replyMsg = `See ${hyperlink(linkInfo.description, hideLinkEmbed(linkInfo.url))}`;
-  if (target) replyMsg = `${userMention(target.id)} ${replyMsg}`;
+  const message = `See ${hyperlink(linkInfo.description, hideLinkEmbed(linkInfo.url))}`;
   await interaction.reply({
-    content: replyMsg,
+    content: maybeMention(message, target),
     ephemeral: !target,
   });
 };
+
+const maybeMention = (msg: string, target: User | null) =>
+  target ? `${userMention(target.id)} ${msg}` : `${msg}\n\n${italic(NOTE)}`;
+
+const NOTE = `Note: to use this command in response to a user's query, specify the ${inlineCode(
+  "target"
+)} option when invoking the command.`;
