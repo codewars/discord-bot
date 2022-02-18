@@ -1,7 +1,7 @@
 import { AutocompleteInteraction, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ZodError } from "zod";
-import { getLanguages, getUser, Language, UserNotFoundError } from "../codewars";
+import { getLanguages, getUser, UserNotFoundError } from "../codewars";
 import fuzzysearch from "fuzzysearch";
 
 const REDIRECT: string = "This command is only available in channel **#bot-playground**";
@@ -172,7 +172,6 @@ export const data = async () =>
     )
     .toJSON();
 
-let languages: Language[] | null = null;
 export const autocomplete = async (interaction: AutocompleteInteraction) => {
   const focused = interaction.options.data.find((opt) => opt.focused);
   // The following shouldn't happen since "language" is the only option with autocompletion, but
@@ -184,9 +183,7 @@ export const autocomplete = async (interaction: AutocompleteInteraction) => {
   // Discord shows "no option match your search" when returning an empty array.
   if (!typed) return [];
 
-  // Fetch the languages once. The bot restarts at least once a day, so this should be fine for now.
-  if (!languages) languages = await getLanguages();
-
+  const languages = await getLanguages();
   const ignoreCase = typed.toLowerCase() === typed;
   const filtered = languages
     .filter(
@@ -213,7 +210,21 @@ export const call = async (interaction: CommandInteraction) => {
     username = displayName;
   }
   const target = interaction.options.getString("target");
-  const language = interaction.options.getString("language");
+  let language = interaction.options.getString("language");
+  if (language) {
+    const languages = await getLanguages();
+    // Discord started sending the `name` of autocompleted options.
+    // Work around by finding the language id by name.
+    const found = languages.find((x) => x.id === language || x.name === language);
+    if (!found) {
+      await interaction.reply({
+        content: `${language} is not a valid language id or name`,
+        ephemeral: true,
+      });
+      return;
+    }
+    language = found.id;
+  }
   const mode = interaction.options.getString("mode") || DEFAULTMODE;
   const limit = interaction.options.getString("limit") || "1kyu";
   const ephemeral = interaction.options.getBoolean("ephemeral") || false;
