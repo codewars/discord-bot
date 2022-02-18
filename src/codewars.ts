@@ -48,7 +48,17 @@ export class UserNotFoundError extends Error {
   }
 }
 
+let languages: Language[] | null = null;
+/**
+ * Get the list of supported languages using Codewars API.
+ * The result is stored, so this only requests once.
+ * The bot restarts at least once a day, so this should be fine for now.
+ * @returns Supported languages
+ */
 export const getLanguages: () => Promise<Language[]> = async () => {
-  const response = await fetch("https://www.codewars.com/api/v1/languages");
-  return z.object({ data: z.array(Language) }).parse(await response.json()).data;
+  if (!languages) {
+    const response = await fetch("https://www.codewars.com/api/v1/languages");
+    languages = z.object({ data: z.array(Language) }).parse(await response.json()).data;
+  }
+  return languages;
 };
