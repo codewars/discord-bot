@@ -95,14 +95,6 @@ function errorMessage(err: unknown): string {
   return `Unknown error: ${err}`;
 }
 
-export type Options = {
-  mode?: string;
-  language?: string;
-  target?: string;
-  limit?: string;
-  help?: string;
-};
-
 async function getNextRank(
   score: number,
   user: string,
