@@ -8,7 +8,7 @@ export default async (message: Message) => {
 
   const links = trainerLinks.map((s) => "- <" + s.replace(/\/train\/[a-z]+$/, "") + ">").join("\n");
   const Q = "❓";
-  const newMessage = await message.channel.send(stripIndents`
+  const newMessage = await message.reply(stripIndents`
     Fixed direct link(s) to trainer:
     ${links}
     React with ${Q} within ${REACTION_SECS}s to get a DM with explanation.
