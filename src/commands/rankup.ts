@@ -1,7 +1,7 @@
 import { AutocompleteInteraction, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ZodError } from "zod";
-import { getLanguages, getUser, UserNotFoundError } from "../codewars";
+import { getLanguages, getScore, UserNotFoundError } from "../codewars";
 import fuzzysearch from "fuzzysearch";
 
 const REDIRECT: string = "This command is only available in channel **#bot-playground**";
@@ -95,14 +95,6 @@ function errorMessage(err: unknown): string {
   return `Unknown error: ${err}`;
 }
 
-export type Options = {
-  mode?: string;
-  language?: string;
-  target?: string;
-  limit?: string;
-  help?: string;
-};
-
 async function getNextRank(
   score: number,
   user: string,
@@ -119,7 +111,7 @@ async function getNextRank(
   // If target is a user
   if (targ) {
     try {
-      const targScore = await getUser(targ, lang);
+      const targScore = await getScore(targ, lang);
       if (targScore < score) return `${user} has already reached ${targ}'s rank`;
       return [`overtake ${targ}`, targScore - score + 1];
     } catch (err) {
@@ -241,7 +233,7 @@ export const call = async (interaction: CommandInteraction) => {
   // Get user data
   let score: number;
   try {
-    score = await getUser(username, language);
+    score = await getScore(username, language);
   } catch (err) {
     await interaction.reply({
       content: errorMessage(err),

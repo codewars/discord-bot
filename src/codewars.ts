@@ -32,9 +32,15 @@ type RankInfo = z.infer<typeof RankInfo>;
 type ProfileResponse = z.infer<typeof ProfileResponse>;
 export type Language = z.infer<typeof Language>;
 
-// Retrieve a users language score, or overall score if language is undefined
-// Throws error if a user is not found
-export async function getUser(user: string, lang: string | null): Promise<number> {
+/**
+ * Get user's language or overall score.
+ *
+ * @param user - Username
+ * @param lang - Optional language to get the score.
+ *               Overall score is returned if unspecified.
+ * @returns Language or overall score
+ */
+export async function getScore(user: string, lang: string | null): Promise<number> {
   const response = await fetch("https://www.codewars.com/api/v1/users/" + user);
   if (response.status === 404) throw new UserNotFoundError(user);
 
