@@ -21,8 +21,8 @@ User: ${name}
 Rank: ${rank}
 Honor: ${honor}\
 ${position ? `\nPosition: #${position}`: ''}\
-${authored ? `\nCreated katas: ${authored}`: ''}
-Completed katas: ${completed}
+${authored ? `\nCreated kata: ${authored}`: ''}
+Completed kata: ${completed}
 \`\`\``
 };
 
