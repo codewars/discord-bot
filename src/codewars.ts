@@ -10,7 +10,7 @@ const RankInfo = z.object({
   score: z.number(),
 });
 
-const ProfileResponse = z.object({
+const UserInfo = z.object({
   username: z.string(),
   name: z.nullable(z.string()),
   honor: z.number(),
@@ -29,23 +29,32 @@ const Language = z.object({
 });
 
 type RankInfo = z.infer<typeof RankInfo>;
-type ProfileResponse = z.infer<typeof ProfileResponse>;
+export type UserInfo = z.infer<typeof UserInfo>;
 export type Language = z.infer<typeof Language>;
+
+/**
+ * Get user info.
+ *
+ * @param user - Username or id
+ * @returns User info
+ */
+export async function getUser(user: string): Promise<UserInfo> {
+  const response = await fetch("https://www.codewars.com/api/v1/users/" + user);
+  if (response.status === 404) throw new UserNotFoundError(user);
+  return UserInfo.parse(await response.json());
+}
 
 /**
  * Get user's language or overall score.
  *
- * @param user - Username
+ * @param user - Username or id
  * @param lang - Optional language to get the score.
  *               Overall score is returned if unspecified.
  * @returns Language or overall score
  */
 export async function getScore(user: string, lang: string | null): Promise<number> {
-  const response = await fetch("https://www.codewars.com/api/v1/users/" + user);
-  if (response.status === 404) throw new UserNotFoundError(user);
-
-  const result = ProfileResponse.parse(await response.json());
-  return (lang ? result.ranks.languages[lang] : result.ranks.overall)?.score ?? 0;
+  const info = await getUser(user);
+  return (lang ? info.ranks.languages[lang] : info.ranks.overall)?.score ?? 0;
 }
 
 export class UserNotFoundError extends Error {
@@ -56,7 +65,7 @@ export class UserNotFoundError extends Error {
 
 let languages: Language[] | null = null;
 /**
- * Get the list of supported languages using Codewars API.
+ * Get the list of supported languages.
  * The result is stored, so this only requests once.
  * The bot restarts at least once a day, so this should be fine for now.
  * @returns Supported languages
