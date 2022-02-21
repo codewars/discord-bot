@@ -29,9 +29,9 @@ Completed katas: ${completed}
 export const data = async () =>
   new SlashCommandBuilder()
     .setName("userinfo")
-    .setDescription("Info about a user")
-    .addStringOption((opt) => opt.setName("username").setDescription("The Codewars username for information about the user"))
-    .addBooleanOption((opt) => opt.setName("ephemeral").setDescription("Don't show user statistics to others"))
+    .setDescription("Get info about a Codewars user")
+    .addStringOption((opt) => opt.setName("username").setDescription("The username to look up"))
+    .addBooleanOption((opt) => opt.setName("ephemeral").setDescription("Hide from others"))
     .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
@@ -64,5 +64,4 @@ export const call = async (interaction: CommandInteraction) => {
     content: content,
     ephemeral: ephemeral,
   });
-  return;
 };
