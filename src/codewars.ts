@@ -21,6 +21,10 @@ const UserInfo = z.object({
     overall: RankInfo,
     languages: z.record(RankInfo),
   }),
+  codeChallenges: z.object({
+    totalAuthored: z.number(),
+    totalCompleted: z.number(),
+  }),
 });
 
 const Language = z.object({
