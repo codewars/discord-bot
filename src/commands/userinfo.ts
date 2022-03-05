@@ -1,6 +1,8 @@
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { getUser } from "../codewars";
+
+const REDIRECT: string = "This command is only available in channel **#bot-playground**";
 
 async function getUserInfo(name: string): Promise<string> {
   let user;
@@ -49,7 +51,16 @@ export const call = async (interaction: CommandInteraction) => {
     username = displayName;
   }
 
-  const ephemeral = interaction.options.getBoolean("ephemeral") || false;      
+  const ephemeral = interaction.options.getBoolean("ephemeral") || false;
+
+  if (!ephemeral && (interaction.channel as TextChannel).name !== "bot-playground") {
+    await interaction.reply({
+      content: REDIRECT,
+      ephemeral: true,
+    });
+    return;
+  }
+
   const content = await getUserInfo(username);
   
   if (!content) {
