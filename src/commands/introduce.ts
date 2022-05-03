@@ -25,8 +25,6 @@ export const data = async () =>
     )
     .toJSON();
 
-export const authorizedRoles = ["admin", "mods", "power-users"];
-
 export const call = async (interaction: CommandInteraction) => {
   const user = interaction.options.getUser("user", true);
   const channel = interaction.options.getChannel("channel", true);
