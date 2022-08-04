@@ -36,6 +36,14 @@ type RankInfo = z.infer<typeof RankInfo>;
 export type UserInfo = z.infer<typeof UserInfo>;
 export type Language = z.infer<typeof Language>;
 
+/** Error class indicating an invalid request. */
+export class RequestError extends Error {}
+export class UserNotFoundError extends RequestError {
+  constructor(user: string) {
+    super(`Could not find user: ${user}`);
+  }
+}
+
 /**
  * Get user info.
  *
@@ -59,12 +67,6 @@ export async function getUser(user: string): Promise<UserInfo> {
 export async function getScore(user: string, lang: string | null): Promise<number> {
   const info = await getUser(user);
   return (lang ? info.ranks.languages[lang] : info.ranks.overall)?.score ?? 0;
-}
-
-export class UserNotFoundError extends Error {
-  constructor(user: string) {
-    super(`Could not find user: ${user}`);
-  }
 }
 
 let languages: Language[] | null = null;

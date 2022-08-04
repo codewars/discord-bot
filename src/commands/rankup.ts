@@ -1,10 +1,8 @@
-import { AutocompleteInteraction, CommandInteraction, GuildMember, TextChannel } from "discord.js";
+import { CommandInteraction, GuildMember } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { ZodError } from "zod";
-import { getLanguages, getScore, UserNotFoundError } from "../codewars";
-import fuzzysearch from "fuzzysearch";
-
-const REDIRECT: string = "This command is only available in channel **#bot-playground**";
+import { RequestError, getScore, Language } from "../codewars";
+import { checkBotPlayground, findLanguage } from "../common";
+export { languageAutocomplete as autocomplete } from "../common";
 
 const LEAST = "least";
 const EACH = "each";
@@ -69,7 +67,7 @@ function formatResult(
   ranks: [string, string][],
   target: string,
   mode: Mode,
-  lang: string | null
+  lang: Language | null
 ) {
   const maxLen = Math.max(...ranks.map((v) => String(v[0]).length));
   const rankStr =
@@ -82,17 +80,7 @@ function formatResult(
 \`\`\`
 ${rankStr}
 \`\`\`
-to ${target}${lang ? ` in ${lang}` : ""}`;
-}
-
-function errorMessage(err: unknown): string {
-  if (err instanceof UserNotFoundError) {
-    return err.message;
-  }
-  if (err instanceof ZodError) {
-    return `Got unexpected response from Codewars API:\n${err.message}`;
-  }
-  return `Unknown error: ${err}`;
+to ${target}${lang ? ` in ${lang.name}` : ""}`;
 }
 
 async function getNextRank(
@@ -110,13 +98,9 @@ async function getNextRank(
 
   // If target is a user
   if (targ) {
-    try {
       const targScore = await getScore(targ, lang);
       if (targScore < score) return `${user} has already reached ${targ}'s rank`;
       return [`overtake ${targ}`, targScore - score + 1];
-    } catch (err) {
-      return errorMessage(err);
-    }
   }
 
   // Otherwise take next rank above user's current
@@ -164,95 +148,35 @@ export const data = async () =>
     )
     .toJSON();
 
-export const autocomplete = async (interaction: AutocompleteInteraction) => {
-  const focused = interaction.options.data.find((opt) => opt.focused);
-  // The following shouldn't happen since "language" is the only option with autocompletion, but
-  // this can be used to detect the focused option if we have multiple autocomplete options.
-  if (focused?.name !== "language") return [];
-
-  const typed = interaction.options.getString("language");
-  // We can't show all options because we have more than 25.
-  // Discord shows "no option match your search" when returning an empty array.
-  if (!typed) return [];
-
-  const languages = await getLanguages();
-  const ignoreCase = typed.toLowerCase() === typed;
-  const filtered = languages
-    .filter(
-      ({ id, name }) =>
-        fuzzysearch(typed, id) || fuzzysearch(typed, ignoreCase ? name.toLowerCase() : name)
-    )
-    .map(({ id, name }) => ({ name: name, value: id }));
-  // Make sure the response is 25 items or less.
-  return filtered.slice(0, 25);
-};
-
 export const call = async (interaction: CommandInteraction) => {
   let username = interaction.options.getString("username");
   if (!username) {
     const member = interaction.member;
     const displayName = member instanceof GuildMember ? member.displayName : member?.nick;
-    if (!displayName) {
-      await interaction.reply({
-        content: "Failed to fetch the name of the current user",
-        ephemeral: true,
-      });
-      return;
-    }
+    if (!displayName) throw new RequestError("Failed to fetch the name of the current user");
     username = displayName;
   }
   const target = interaction.options.getString("target");
-  let language = interaction.options.getString("language");
-  if (language) {
-    const languages = await getLanguages();
-    // Discord started sending the `name` of autocompleted options.
-    // Work around by finding the language id by name.
-    const found = languages.find((x) => x.id === language || x.name === language);
-    if (!found) {
-      await interaction.reply({
-        content: `${language} is not a valid language id or name`,
-        ephemeral: true,
-      });
-      return;
-    }
-    language = found.id;
-  }
+  const language = await findLanguage(interaction.options.getString("language"));
   const mode = interaction.options.getString("mode") || DEFAULTMODE;
   const limit = interaction.options.getString("limit") || "1kyu";
   const ephemeral = interaction.options.getBoolean("ephemeral") || false;
-
-  // Restrict command output to #bot-playground unless ephemeral is set
-  if (!ephemeral && (interaction.channel as TextChannel).name !== "bot-playground") {
-    await interaction.reply({
-      content: REDIRECT,
-      ephemeral: true,
-    });
-    return;
-  }
+  checkBotPlayground(ephemeral, interaction);
 
   // Get user data
-  let score: number;
-  try {
-    score = await getScore(username, language);
-  } catch (err) {
-    await interaction.reply({
-      content: errorMessage(err),
-      ephemeral: true,
-    });
-    return;
-  }
+  let score: number = await getScore(username, language?.id ?? null);
   if (score == 0) {
     await interaction.reply({
-      content: `${username} has not started training \`${language}\``,
-      ephemeral: true,
+      content: `${username} has not started training ${language?.name ?? "Overall"}`,
+      ephemeral,
     });
     return;
   }
 
-  const nextRankScore = await getNextRank(score, username, target, language);
+  const nextRankScore = await getNextRank(score, username, target, language?.id ?? null);
   if (typeof nextRankScore == "string") {
     await interaction.reply({
-      content: nextRankScore,
+      content: `${nextRankScore}${language ? ` in ${language.name}` : ""}`,
       ephemeral,
     });
     return;

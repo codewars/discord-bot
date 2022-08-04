@@ -1,7 +1,8 @@
-import { CacheType, Interaction } from "discord.js";
+import { CacheType, CommandInteraction, Interaction } from "discord.js";
 import { oneLine } from "common-tags";
 
 import { commands } from "../commands";
+import { RequestError } from "../codewars";
 
 // Listener for (/) commands from humans.
 // We may add more listeners like `onButton`.
@@ -13,15 +14,21 @@ export const onCommand = async <T extends CacheType>(interaction: Interaction<T>
     try {
       await commands[commandName].call(interaction);
     } catch (e) {
-      console.error(e);
-      await interaction.reply({
-        content: ERROR_MESSAGE,
-        // Only show this message to the user who used the command.
-        ephemeral: true,
-      });
+      await handleError(e, interaction);
     }
   }
 };
+
+async function handleError(err: any, interaction: CommandInteraction) {
+  let msg = ERROR_MESSAGE;
+  if (err instanceof RequestError) msg = err.message;
+  else console.error(err);
+  await interaction.reply({
+    content: msg,
+    // Only show this message to the user who used the command.
+    ephemeral: true,
+  });
+}
 
 const ERROR_MESSAGE = oneLine`
   Something went wrong!
