@@ -32,9 +32,17 @@ const Language = z.object({
   name: z.string(),
 });
 
+const LeaderboardPosition = z.object({
+  position: z.number(),
+  username: z.string(),
+  score: z.number(),
+  rank: z.number(),
+});
+
 type RankInfo = z.infer<typeof RankInfo>;
 export type UserInfo = z.infer<typeof UserInfo>;
 export type Language = z.infer<typeof Language>;
+export type LeaderboardPosition = z.infer<typeof LeaderboardPosition>;
 
 /** Error class indicating an invalid request. */
 export class RequestError extends Error {}
@@ -83,3 +91,36 @@ export const getLanguages: () => Promise<Language[]> = async () => {
   }
   return languages;
 };
+
+const USERS_PER_PAGE = 50;
+
+/**
+ * Get a leaderboard for rank score.
+ *
+ * @param lang - Optional language to get the leaderboard.
+ *               Overall leaderboard is returned if unspecified.
+ * @param startPosition - The first shown user position of the result.
+                          Will at least 1 be taken as 1.
+ * @param limit - Number of positions to fetch
+ * @returns Language or overall leaderboard
+ */
+export async function getLeaderboard(
+  lang: string | null,
+  startPosition: number,
+  limit: number
+): Promise<LeaderboardPosition[]> {
+  lang = lang ?? "overall";
+  startPosition = Math.max(startPosition, 1);
+  let startPage = Math.ceil(startPosition / USERS_PER_PAGE);
+  let endPage = Math.ceil((startPosition + limit - 1) / USERS_PER_PAGE);
+  let result: LeaderboardPosition[] = [];
+  for (let p = startPage; p <= endPage; ++p) {
+    const url = "https://www.codewars.com/api/v1/leaders/ranks/" + lang + "?page=" + p;
+    const response = await fetch(url);
+    let data = z.object({ data: z.array(LeaderboardPosition) }).parse(await response.json()).data;
+    if (data.length == 0) break;
+    result.push(...data);
+  }
+  let start = (startPosition - 1) % USERS_PER_PAGE;
+  return result.slice(start, start + limit);
+}
