@@ -1,17 +1,11 @@
-import { CommandInteraction, GuildMember, TextChannel } from "discord.js";
+import { CommandInteraction, GuildMember } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { getUser } from "../codewars";
-
-const REDIRECT: string = "This command is only available in channel **#bot-playground**";
+import { RequestError, getUser } from "../codewars";
+import { checkBotPlayground } from "../common";
 
 async function getUserInfo(name: string): Promise<string> {
-  let user;
-  try {
-    user = await getUser(name);
-  } catch (err) {
-    return '';
-  }
-  
+  let user = await getUser(name);
+
   const rank = user.ranks.overall.name;
   const honor = user.honor;
   const position = user.leaderboardPosition;
@@ -22,11 +16,11 @@ async function getUserInfo(name: string): Promise<string> {
 User: ${name}
 Rank: ${rank}
 Honor: ${honor}\
-${position ? `\nPosition: #${position}`: ''}\
-${authored ? `\nCreated kata: ${authored}`: ''}
+${position ? `\nPosition: #${position}` : ""}\
+${authored ? `\nCreated kata: ${authored}` : ""}
 Completed kata: ${completed}
-\`\`\``
-};
+\`\`\``;
+}
 
 export const data = async () =>
   new SlashCommandBuilder()
@@ -41,36 +35,15 @@ export const call = async (interaction: CommandInteraction) => {
   if (!username) {
     const member = interaction.member;
     const displayName = member instanceof GuildMember ? member.displayName : member?.nick;
-    if (!displayName) {
-      await interaction.reply({
-        content: "Failed to fetch the name of the current user",
-        ephemeral: true,
-      });
-      return;
-    }
+    if (!displayName) throw new RequestError("Failed to fetch the name of the current user");
     username = displayName;
   }
 
   const ephemeral = interaction.options.getBoolean("ephemeral") || false;
-
-  if (!ephemeral && (interaction.channel as TextChannel).name !== "bot-playground") {
-    await interaction.reply({
-      content: REDIRECT,
-      ephemeral: true,
-    });
-    return;
-  }
+  checkBotPlayground(ephemeral, interaction);
 
   const content = await getUserInfo(username);
-  
-  if (!content) {
-    await interaction.reply({
-      content: `Could not find user: ${username}`,
-      ephemeral: true,
-    });
-    return;
-  }
-  
+
   await interaction.reply({
     content: content,
     ephemeral: ephemeral,
