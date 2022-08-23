@@ -1,7 +1,7 @@
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { RequestError, getUser } from "../codewars";
-import { checkBotPlayground } from "../common";
+import { getUser } from "../codewars";
+import { checkBotPlayground, getUsername } from "../common";
 
 async function getUserInfo(name: string): Promise<string> {
   let user = await getUser(name);
@@ -31,14 +31,7 @@ export const data = async () =>
     .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
-  let username = interaction.options.getString("username");
-  if (!username) {
-    const member = interaction.member;
-    const displayName = member instanceof GuildMember ? member.displayName : member?.nick;
-    if (!displayName) throw new RequestError("Failed to fetch the name of the current user");
-    username = displayName;
-  }
-
+  const username = getUsername(interaction);
   const ephemeral = interaction.options.getBoolean("ephemeral") || false;
   checkBotPlayground(ephemeral, interaction);
 
