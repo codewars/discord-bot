@@ -35,7 +35,7 @@ export const data = async () =>
       option
         .setName("format")
         .setDescription("The format to use")
-        .addChoices(Object.keys(formats).map((k) => [k, k]))
+        .addChoices(...Object.keys(formats).map((k) => ({ name: k, value: k })))
     )
     .toJSON();
 

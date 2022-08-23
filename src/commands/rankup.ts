@@ -98,9 +98,9 @@ async function getNextRank(
 
   // If target is a user
   if (targ) {
-      const targScore = await getScore(targ, lang);
-      if (targScore < score) return `${user} has already reached ${targ}'s rank`;
-      return [`overtake ${targ}`, targScore - score + 1];
+    const targScore = await getScore(targ, lang);
+    if (targScore < score) return `${user} has already reached ${targ}'s rank`;
+    return [`overtake ${targ}`, targScore - score + 1];
   }
 
   // Otherwise take next rank above user's current
@@ -135,13 +135,13 @@ export const data = async () =>
       option
         .setName("mode")
         .setDescription("Choose your preferred method to reach your target")
-        .addChoices(modes.map((mode) => [mode.description, mode.name]))
+        .addChoices(...modes.map((mode) => ({ name: mode.description, value: mode.name })))
     )
     .addStringOption((option) =>
       option
         .setName("limit")
         .setDescription("Don't suggest Kata above this rank")
-        .addChoices(limits.map((limit) => [limit, limit]))
+        .addChoices(...limits.map((limit) => ({ name: limit, value: limit })))
     )
     .addBooleanOption((option) =>
       option.setName("ephemeral").setDescription("Don't show rank up statistics to others")

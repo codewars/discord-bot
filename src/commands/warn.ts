@@ -37,7 +37,7 @@ export const data = async () =>
         .setName("reason")
         .setDescription("The reason the specified user violated server rules")
         .setRequired(true)
-        .addChoices(reasons.map((reason) => [reason.description, reason.name]))
+        .addChoices(...reasons.map((reason) => ({ name: reason.description, value: reason.name })))
     )
     .toJSON();
 
