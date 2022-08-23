@@ -57,7 +57,7 @@ export const data = async () =>
         .setName("topic")
         .setDescription("The topic to link to")
         .setRequired(true)
-        .addChoices(Object.keys(LINKS).map((k) => [LINKS[k].description, k]))
+        .addChoices(...Object.keys(LINKS).map((k) => ({ name: LINKS[k].description, value: k })))
     )
     .addUserOption((option) =>
       option.setName("target").setDescription("Direct the specified user to the given link")

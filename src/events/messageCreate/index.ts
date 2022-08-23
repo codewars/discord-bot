@@ -13,7 +13,7 @@ export const onMessageCreate = async (message: Message) => {
     for (const action of handlers) {
       if (await action(message)) return;
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error(e.message);
   }
 };

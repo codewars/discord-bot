@@ -26,7 +26,7 @@ export default async (message: Message) => {
       try {
         const dm = await user.createDM();
         await dm.send(INFO);
-      } catch (err) {
+      } catch (err: any) {
         // Can error if the user have DM disabled.
         console.warn(`failed to DM ${user.tag}: ${err.message || "unknown error"}`);
       }
@@ -36,7 +36,7 @@ export default async (message: Message) => {
       try {
         await newMessage.edit(newMessage.content.replace(/React with .+$/, "").trimRight());
         await reaction.remove();
-      } catch (e) {
+      } catch (e: any) {
         console.log(`failed to remove reaction: ${e.message || "unknown error"}`);
       }
     });

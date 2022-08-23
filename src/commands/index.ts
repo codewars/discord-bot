@@ -1,9 +1,9 @@
-import { RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord-api-types/v9";
+import { RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord-api-types/v10";
 import {
   Client,
   CommandInteraction,
+  ApplicationCommandOptionChoiceData,
   AutocompleteInteraction,
-  ApplicationCommandOptionChoice,
 } from "discord.js";
 import { REST } from "@discordjs/rest";
 
@@ -26,7 +26,7 @@ export type Command = {
   // Autocompletion handler.
   autocomplete?: (
     interaction: AutocompleteInteraction
-  ) => Promise<ApplicationCommandOptionChoice[]>;
+  ) => Promise<ApplicationCommandOptionChoiceData[]>;
 };
 
 export const commands: { [k: string]: Command } = {
