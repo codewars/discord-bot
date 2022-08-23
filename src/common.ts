@@ -48,7 +48,7 @@ export const getUsername = (interaction: CommandInteraction): string => {
  * @returns List of fuzzy matching languages, max 25
  */
 export const languageAutocomplete = async (interaction: AutocompleteInteraction) => {
-  const focused = interaction.options.data.find((opt) => opt.focused);
+  const focused = getFocused(interaction.options.data);
   // The following shouldn't happen since "language" is the only option with autocompletion, but
   // this can be used to detect the focused option if we have multiple autocomplete options.
   if (focused?.name !== "language") return [];
@@ -69,6 +69,14 @@ export const languageAutocomplete = async (interaction: AutocompleteInteraction)
   // Make sure the response is 25 items or less.
   return filtered.slice(0, 25);
 };
+
+function getFocused(
+  data: readonly CommandInteractionOption[] | undefined
+): CommandInteractionOption | undefined {
+  return (
+    data?.find((opt) => opt.focused) ?? data?.map((opt) => getFocused(opt.options)).find((o) => o)
+  );
+}
 
 /**
  * Attempts to parse a language matching by id or name to the given language option string or
