@@ -1,7 +1,7 @@
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { RequestError, getScore, Language } from "../codewars";
-import { checkBotPlayground, findLanguage } from "../common";
+import { getScore, Language } from "../codewars";
+import { checkBotPlayground, findLanguage, getUsername } from "../common";
 export { languageAutocomplete as autocomplete } from "../common";
 
 const LEAST = "least";
@@ -149,13 +149,7 @@ export const data = async () =>
     .toJSON();
 
 export const call = async (interaction: CommandInteraction) => {
-  let username = interaction.options.getString("username");
-  if (!username) {
-    const member = interaction.member;
-    const displayName = member instanceof GuildMember ? member.displayName : member?.nick;
-    if (!displayName) throw new RequestError("Failed to fetch the name of the current user");
-    username = displayName;
-  }
+  const username = getUsername(interaction);
   const target = interaction.options.getString("target");
   const language = await findLanguage(interaction.options.getString("language"));
   const mode = interaction.options.getString("mode") || DEFAULTMODE;

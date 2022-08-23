@@ -1,6 +1,12 @@
 import { readFileSync } from "fs";
 import * as path from "path";
-import { AutocompleteInteraction, CommandInteraction, TextChannel } from "discord.js";
+import {
+  AutocompleteInteraction,
+  CommandInteraction,
+  CommandInteractionOption,
+  GuildMember,
+  TextChannel,
+} from "discord.js";
 import { RequestError, getLanguages, Language } from "./codewars";
 import fuzzysearch from "fuzzysearch";
 
@@ -20,12 +26,29 @@ export const getTexts = (commandName: string, values: string[]): Map<string, str
 };
 
 /**
+ * Attemps to parse a username from the 'username' option. If no value is present the display name of the user sending the interaction is taken.
+ * @param interaction the CommandInteraction to get the values from
+ * @returns username
+ * @throws RequestError if the username could not be fetched
+ */
+export const getUsername = (interaction: CommandInteraction): string => {
+  let username = interaction.options.getString("username");
+  if (!username) {
+    const member = interaction.member;
+    const displayName = member instanceof GuildMember ? member.displayName : member?.nick;
+    if (!displayName) throw new RequestError("Failed to fetch the name of the current user");
+    username = displayName;
+  }
+  return username;
+};
+
+/**
  * Language option autocomplete interaction. Export as `autocomplete` to activate.
  * @param interaction the AutocompleteInteraction to check
  * @returns List of fuzzy matching languages, max 25
  */
 export const languageAutocomplete = async (interaction: AutocompleteInteraction) => {
-  const focused = interaction.options.data.find((opt) => opt.focused);
+  const focused = getFocused(interaction.options.data);
   // The following shouldn't happen since "language" is the only option with autocompletion, but
   // this can be used to detect the focused option if we have multiple autocomplete options.
   if (focused?.name !== "language") return [];
@@ -46,6 +69,14 @@ export const languageAutocomplete = async (interaction: AutocompleteInteraction)
   // Make sure the response is 25 items or less.
   return filtered.slice(0, 25);
 };
+
+function getFocused(
+  data: readonly CommandInteractionOption[] | undefined
+): CommandInteractionOption | undefined {
+  return (
+    data?.find((opt) => opt.focused) ?? data?.map((opt) => getFocused(opt.options)).find((o) => o)
+  );
+}
 
 /**
  * Attempts to parse a language matching by id or name to the given language option string or

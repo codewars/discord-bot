@@ -124,3 +124,22 @@ export async function getLeaderboard(
   let start = (startPosition - 1) % USERS_PER_PAGE;
   return result.slice(start, start + limit);
 }
+/**
+ * Get a leaderboard for rank score searching for a given user.
+ *
+ * @param lang - Optional language to get the leaderboard.
+ *               Overall leaderboard is returned if unspecified.
+ * @param user - The name of the Codewars user to search for.
+ * @returns Language or overall leaderboard
+ */
+export async function getLeaderboardForUser(
+  lang: string | null,
+  user: string
+): Promise<LeaderboardPosition[]> {
+  lang = lang ?? "overall";
+  const url = "https://www.codewars.com/api/v1/leaders/ranks/" + lang + "?user=" + user;
+  const response = await fetch(url);
+  if (response.status === 404) throw new UserNotFoundError(user);
+  return z.object({ data: z.array(LeaderboardPosition) }).parse(await response.json()).data;
+}
+
