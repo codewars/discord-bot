@@ -8,15 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
         env:
-          # `HD_` prefix is for this action and is removed when passed to the app.
-          # See https://github.com/AkhileshNS/heroku-deploy#environment-variables
-          HD_NODE_ENV: "production"
-          HD_BOT_TOKEN: ${{secrets.DISCORD_BOT_TOKEN}}
-          HD_CLIENT_ID: ${{secrets.DISCORD_CLIENT_ID}}
-          HD_GUILD_ID: ${{secrets.DISCORD_GUILD_ID}}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
