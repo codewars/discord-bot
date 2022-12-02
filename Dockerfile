@@ -18,6 +18,9 @@ COPY . .
 
 RUN npm install
 
+
+# Actual image used to run the bot.
+# Node.js and our code is copied into this image.
 FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"
