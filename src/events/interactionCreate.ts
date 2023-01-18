@@ -1,4 +1,4 @@
-import { CacheType, CommandInteraction, Interaction } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Interaction } from "discord.js";
 import { oneLine } from "common-tags";
 
 import { commands } from "../commands";
@@ -7,7 +7,7 @@ import { RequestError } from "../codewars";
 // Listener for (/) commands from humans.
 // We may add more listeners like `onButton`.
 export const onCommand = async <T extends CacheType>(interaction: Interaction<T>) => {
-  if (!interaction.isCommand() || interaction.user.bot) return;
+  if (!interaction.isChatInputCommand() || interaction.user.bot) return;
 
   const { commandName } = interaction;
   if (commands.hasOwnProperty(commandName)) {
@@ -19,7 +19,7 @@ export const onCommand = async <T extends CacheType>(interaction: Interaction<T>
   }
 };
 
-async function handleError(err: any, interaction: CommandInteraction) {
+async function handleError(err: any, interaction: ChatInputCommandInteraction) {
   let msg = ERROR_MESSAGE;
   if (err instanceof RequestError) msg = err.message;
   else console.error(err);

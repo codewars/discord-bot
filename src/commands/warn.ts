@@ -1,5 +1,9 @@
-import { CommandInteraction } from "discord.js";
-import { SlashCommandBuilder, userMention, hideLinkEmbed } from "@discordjs/builders";
+import {
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+  userMention,
+  hideLinkEmbed,
+} from "discord.js";
 import { getTexts } from "../common";
 
 const reasons = [
@@ -41,7 +45,7 @@ export const data = async () =>
     )
     .toJSON();
 
-export const call = async (interaction: CommandInteraction) => {
+export const call = async (interaction: ChatInputCommandInteraction) => {
   const user = interaction.options.getUser("user", true);
   const reason = interaction.options.getString("reason", true);
   const reply = warnTexts.get(reason);

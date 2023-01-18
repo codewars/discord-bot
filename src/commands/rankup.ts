@@ -1,5 +1,4 @@
-import { CommandInteraction } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { getScore, Language } from "../codewars";
 import { checkBotPlayground, findLanguage, getUsername } from "../common";
 export { languageAutocomplete as autocomplete } from "../common";
@@ -148,7 +147,7 @@ export const data = async () =>
     )
     .toJSON();
 
-export const call = async (interaction: CommandInteraction) => {
+export const call = async (interaction: ChatInputCommandInteraction) => {
   const username = getUsername(interaction);
   const target = interaction.options.getString("target");
   const language = await findLanguage(interaction.options.getString("language"));

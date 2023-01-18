@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, ActivityType } from "discord.js";
 
 export const makeOnReady = (bot: Client) => async () => {
   console.log("ready!");
@@ -7,7 +7,7 @@ export const makeOnReady = (bot: Client) => async () => {
     activities: [
       {
         name: "Codewars",
-        type: "PLAYING",
+        type: ActivityType.Playing,
         url: "https://www.codewars.com/",
       },
     ],

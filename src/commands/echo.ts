@@ -1,5 +1,5 @@
-import { CommandInteraction } from "discord.js";
 import {
+  ChatInputCommandInteraction,
   SlashCommandBuilder,
   blockQuote,
   bold,
@@ -10,7 +10,7 @@ import {
   spoiler,
   strikethrough,
   underscore,
-} from "@discordjs/builders";
+} from "discord.js";
 
 const formats: { [k: string]: (s: string) => string } = {
   blockQuote,
@@ -39,7 +39,7 @@ export const data = async () =>
     )
     .toJSON();
 
-export const call = async (interaction: CommandInteraction) => {
+export const call = async (interaction: ChatInputCommandInteraction) => {
   const input = interaction.options.getString("input", true);
   const format = interaction.options.getString("format");
   const msg = format && formats.hasOwnProperty(format) ? formats[format](input) : input;
