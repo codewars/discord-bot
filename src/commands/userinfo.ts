@@ -1,5 +1,4 @@
-import { CommandInteraction } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { getUser } from "../codewars";
 import { checkBotPlayground, getUsername } from "../common";
 
@@ -30,7 +29,7 @@ export const data = async () =>
     .addBooleanOption((opt) => opt.setName("ephemeral").setDescription("Hide from others"))
     .toJSON();
 
-export const call = async (interaction: CommandInteraction) => {
+export const call = async (interaction: ChatInputCommandInteraction) => {
   const username = getUsername(interaction);
   const ephemeral = interaction.options.getBoolean("ephemeral") || false;
   checkBotPlayground(ephemeral, interaction);

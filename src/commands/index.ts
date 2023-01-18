@@ -1,11 +1,12 @@
-import { RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord-api-types/v10";
 import {
+  RESTPostAPIApplicationCommandsJSONBody,
+  Routes,
   Client,
-  CommandInteraction,
   ApplicationCommandOptionChoiceData,
   AutocompleteInteraction,
+  REST,
+  ChatInputCommandInteraction,
 } from "discord.js";
-import { REST } from "@discordjs/rest";
 
 import { Config } from "../config";
 
@@ -22,7 +23,7 @@ export type Command = {
   // Data to send when registering.
   data: () => Promise<RESTPostAPIApplicationCommandsJSONBody>;
   // Handler.
-  call: (interaction: CommandInteraction) => Promise<void>;
+  call: (interaction: ChatInputCommandInteraction) => Promise<void>;
   // Autocompletion handler.
   autocomplete?: (
     interaction: AutocompleteInteraction
@@ -45,7 +46,7 @@ export const updateCommands = async (client: Client, config: Config) => {
   const guild = client.guilds.cache.get(config.GUILD_ID);
   if (!guild) throw new Error("Failed to get the current guild");
 
-  const rest = new REST({ version: "9" }).setToken(config.BOT_TOKEN);
+  const rest = new REST({ version: "10" }).setToken(config.BOT_TOKEN);
   const body = await Promise.all(Object.values(commands).map((c) => c.data()));
   // Global commands are cached for one hour.
   // Guild commands update instantly.

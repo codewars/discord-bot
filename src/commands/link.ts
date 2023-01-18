@@ -1,12 +1,13 @@
-import { CommandInteraction, User } from "discord.js";
 import {
+  ChatInputCommandInteraction,
+  User,
   SlashCommandBuilder,
   hyperlink,
   hideLinkEmbed,
   userMention,
   italic,
   inlineCode,
-} from "@discordjs/builders";
+} from "discord.js";
 
 const LINKS: { [k: string]: { description: string; url: string } } = {
   docs: {
@@ -64,7 +65,7 @@ export const data = async () =>
     )
     .toJSON();
 
-export const call = async (interaction: CommandInteraction) => {
+export const call = async (interaction: ChatInputCommandInteraction) => {
   const topic = interaction.options.getString("topic", true);
   const target = interaction.options.getUser("target");
   const linkInfo = LINKS[topic];

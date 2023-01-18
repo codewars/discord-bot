@@ -1,5 +1,4 @@
-import { CommandInteraction } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import {
   RequestError,
   getLeaderboard,
@@ -97,7 +96,7 @@ function getRank(rank: number) {
   return -rank + " kyu";
 }
 
-export const call = async (interaction: CommandInteraction) => {
+export const call = async (interaction: ChatInputCommandInteraction) => {
   const ephemeral = interaction.options.getBoolean("ephemeral") || false;
   checkBotPlayground(ephemeral, interaction);
   const language = await findLanguage(interaction.options.getString("language"));

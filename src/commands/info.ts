@@ -1,6 +1,5 @@
 // A subcommand example
-import { CommandInteraction } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 export const data = async () =>
   new SlashCommandBuilder()
@@ -15,7 +14,7 @@ export const data = async () =>
     .addSubcommand((sub) => sub.setName("server").setDescription("Info about the server"))
     .toJSON();
 
-export const call = async (interaction: CommandInteraction) => {
+export const call = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "user":
       const user = interaction.options.getUser("user") || interaction.user;

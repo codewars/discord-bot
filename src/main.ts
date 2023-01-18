@@ -1,4 +1,4 @@
-import { Client, Intents } from "discord.js";
+import { Client, GatewayIntentBits, Events } from "discord.js";
 
 import { fromEnv } from "./config";
 import { updateCommands } from "./commands";
@@ -9,10 +9,10 @@ const config = fromEnv();
 const bot = new Client({
   intents: [
     // Required to work properly.
-    Intents.FLAGS.GUILDS,
+    GatewayIntentBits.Guilds,
     // For `messageCreate`.
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions,
   ],
   allowedMentions: {
     // Parse roles and users mentions in the context. But not @everyone, nor @here.
@@ -23,10 +23,10 @@ const bot = new Client({
 });
 
 // Add event listeners
-bot.once("ready", makeOnReady(bot));
-bot.on("messageCreate", onMessageCreate);
-bot.on("interactionCreate", onCommand);
-bot.on("interactionCreate", onAutocomplete);
+bot.once(Events.ClientReady, makeOnReady(bot));
+bot.on(Events.MessageCreate, onMessageCreate);
+bot.on(Events.InteractionCreate, onCommand);
+bot.on(Events.InteractionCreate, onAutocomplete);
 
 // Update commands and join
 (async () => {

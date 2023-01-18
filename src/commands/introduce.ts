@@ -1,5 +1,9 @@
-import { CommandInteraction } from "discord.js";
-import { SlashCommandBuilder, userMention, hideLinkEmbed } from "@discordjs/builders";
+import {
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+  userMention,
+  hideLinkEmbed,
+} from "discord.js";
 import { getTexts } from "../common";
 
 const channels = ["help-solve"];
@@ -25,10 +29,10 @@ export const data = async () =>
     )
     .toJSON();
 
-export const call = async (interaction: CommandInteraction) => {
+export const call = async (interaction: ChatInputCommandInteraction) => {
   const user = interaction.options.getUser("user", true);
   const channel = interaction.options.getChannel("channel", true);
-  const helpText = channelTexts.get(channel.name);
+  const helpText = channelTexts.get(channel.name || "");
   if (!helpText) {
     await interaction.reply({
       content: `No help text available for the given channel

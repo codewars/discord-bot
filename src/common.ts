@@ -2,6 +2,7 @@ import { readFileSync } from "fs";
 import * as path from "path";
 import {
   AutocompleteInteraction,
+  ChatInputCommandInteraction,
   CommandInteraction,
   CommandInteractionOption,
   GuildMember,
@@ -31,7 +32,7 @@ export const getTexts = (commandName: string, values: string[]): Map<string, str
  * @returns username
  * @throws RequestError if the username could not be fetched
  */
-export const getUsername = (interaction: CommandInteraction): string => {
+export const getUsername = (interaction: ChatInputCommandInteraction): string => {
   let username = interaction.options.getString("username");
   if (!username) {
     const member = interaction.member;
