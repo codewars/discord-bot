@@ -23,7 +23,7 @@ export const call = async (interaction: CommandInteraction) => {
       return;
 
     case "server":
-      const { guild } = interaction;
+      const guild = await interaction.guild?.fetch();
       if (guild) {
         await interaction.reply(`Server name: ${guild.name}\nTotal members: ${guild.memberCount}`);
       }
