@@ -24,7 +24,9 @@ export const call = async (interaction: ChatInputCommandInteraction) => {
     case "server":
       const guild = await interaction.guild?.fetch();
       if (guild) {
-        await interaction.reply(`Server name: ${guild.name}\nTotal members: ${guild.memberCount}`);
+        await interaction.reply(
+          `Server name: ${guild.name}\nTotal members: ${guild.approximateMemberCount}`
+        );
       }
       return;
   }
