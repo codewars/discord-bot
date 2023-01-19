@@ -10,6 +10,7 @@ const bot = new Client({
   intents: [
     // Required to work properly.
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.MessageContent,
     // For `messageCreate`.
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMessageReactions,
