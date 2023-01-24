@@ -14,6 +14,10 @@ const LINKS: { [k: string]: { description: string; url: string } } = {
     description: "The Codewars Docs",
     url: "https://docs.codewars.com/",
   },
+  howto: {
+    description: "How to train on a Codewars kata | The Codewars Docs",
+    url: "https://docs.codewars.com/training/training-example",
+  },
   honor: {
     description: "Honor | The Codewars Docs",
     url: "https://docs.codewars.com/gamification/honor",
