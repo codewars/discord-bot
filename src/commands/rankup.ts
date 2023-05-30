@@ -70,11 +70,11 @@ function formatResult(
 ) {
   const maxLen = Math.max(...ranks.map((v) => String(v[0]).length));
   const rankStr =
-    (mode === EACH ? "   " : "") +
+    (mode === EACH ? "   " : "    ") +
     ranks
       .map(([div, rank]) => (div == "0" ? "" : div.padEnd(maxLen + 1) + rank))
       .filter((v) => v.length > 0)
-      .join(mode === EACH ? "\nor " : "\n");
+      .join(mode === EACH ? "\nor " : "\nand ");
   return `${user} needs to complete:
 \`\`\`
 ${rankStr}
