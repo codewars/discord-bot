@@ -1,63 +1,69 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, userMention, Message, User, GuildMember, APIInteractionGuildMember } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandBuilder, userMention, Message, User, GuildMember, APIInteractionGuildMember } from "discord.js";
 
 // howto
-export const data = async () =>
-  new SlashCommandBuilder()
+export const data = async () => {
+
+  const addTargetUserParam = (scb: SlashCommandSubcommandBuilder) => 
+    scb.addUserOption(b => b.setName("user").setDescription("User to send the message to").setRequired(false);
+
+  return new SlashCommandBuilder()
     .setName("howto")
     .setDescription("HOWTOs and tutorials")
-    .addSubcommand(scb => scb.setName("format_code"  ).addUserOption(b => b.setName("user").setDescription("User to send the message to").setRequired(false)).setDescription("How to use code formatting in Discord messages"))
-    .addSubcommand(scb => scb.setName("ask_for_help" ).addUserOption(b => b.setName("user").setDescription("User to send the message to").setRequired(false)).setDescription("How to ask for help in a way others will want to help you"))
-    .addSubcommand(scb => scb.setName("post_link"    ).addUserOption(b => b.setName("user").setDescription("User to send the message to").setRequired(false)).setDescription("How to post links to kata"))
-    .addSubcommand(scb => scb.setName("create_thread").addUserOption(b => b.setName("user").setDescription("User to send the message to").setRequired(false)).setDescription("How to create discord threads"))
+    .addSubcommand(scb => addTargetUserParam(scb.setName("format_code"  ).setDescription("How to use code formatting in Discord messages")))
+    .addSubcommand(scb => addTargetUserParam(scb.setName("ask_for_help" ).setDescription("How to ask for help in a way others will want to help you")))
+    .addSubcommand(scb => addTargetUserParam(scb.setName("post_link"    ).setDescription("How to post links to kata")))
+    .addSubcommand(scb => addTargetUserParam(scb.setName("create_thread").setDescription("How to create discord threads")))
     .toJSON();
-
+}
 const allowedRoles = new Set(["admin", "mods", "mods+", "power-users"]);
 
 const hasSufficientPrivilege = (member: GuildMember | APIInteractionGuildMember | null) => {
-  let apimember: GuildMember = member as GuildMember;
-  if(!apimember)
-    return;
-  console.info(typeof apimember.roles);
-  return apimember && apimember.roles.cache.some(role => allowedRoles.has(role.name));
+  let guildMember: GuildMember = member as GuildMember;
+  return guildMember && guildMember.roles.cache.some(role => allowedRoles.has(role.name));
 }
 
-export const call = async (interaction: ChatInputCommandInteraction) => {  
-  let targetUser = interaction.options.getUser("user", false) ?? interaction.user;
-  if(targetUser.id !== interaction.user.id && !hasSufficientPrivilege(interaction.member)) {
-    interaction.reply("You are not privileged to use this command.")
-    return;
-  }
+export const call = async (interaction: ChatInputCommandInteraction) => {
+  let invokingUser = interaction.user;  
+  let targetUser   = interaction.options.getUser("user", false) ?? invokingUser;
   
-  let subCommand = interaction.options.getSubcommand();  
-  postHowtoDm(subCommand, targetUser).then( () => interaction.reply(`${userMention(targetUser.id)} please check your DMs`));
+  if(targetUser.id === invokingUser.id || hasSufficientPrivilege(interaction.member)) {
+    let subCommand = interaction.options.getSubcommand();  
+    postHowtoDm(subCommand, targetUser).then( () => interaction.reply(`${userMention(targetUser.id)} please check your DMs`));
+  } else {  
+    interaction.reply({ content: `${userMention(invokingUser.id)}, you are not privileged to use this command.`, ephemeral: true });
+  }
 };
 
 
-const postHowtoDm = async (command: string, user: User) => {
+const postHowtoDm = async (command: string, targetUser: User) => {
   
   let reply = ReplyBuilder.for(command).buildReply(); 
 
   const setUpReactions = (msg: Message<false>) => {
-    for(let reaction of reply.reactions) { msg.react(reaction.emoji); }
+    for(let reaction of reply.reactions) { 
+      msg.react(reaction.emoji);
+    }
+
+    // Do not set up a collector if there are no reactions
     if(!reply.reactions.length)
       return;
 
-    const collector = msg.createReactionCollector({filter: (_, u) => !u.bot });
-
-    collector.on('collect', (reaction, reactor) => {
-      if(reactor.bot || reactor.id != user.id)
+    const collector = msg.createReactionCollector({filter: (_, reactor) => !reactor.bot });
+    collector.on('collect', (reaction, reactor) => {      
+      if(reactor.bot || reactor.id != targetUser.id)
         return;
+
       let emoji = reaction.emoji.name;
-      let cmd = reply.reactions.find(r => r.emoji == emoji)?.command;
-      if(cmd)
-        postHowtoDm(cmd, user);
+      let reactionCommand = reply.reactions.find(r => r.emoji == emoji)?.command;
+      if(reactionCommand) {
+        postHowtoDm(reactionCommand, targetUser);
+      }
     });
   }
 
-
-  return user.createDM(true)
-  .then(dm => dm.send(reply.body))
-  .then(setUpReactions);
+  return targetUser.createDM(true)
+    .then(dm => dm.send(reply.body))
+    .then(setUpReactions);
 }
 
 class Reaction {
