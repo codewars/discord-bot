@@ -3,11 +3,9 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
   userMention,
-  Message,
   User,
   GuildMember,
   APIInteractionGuildMember,
-  DiscordAPIError,
 } from "discord.js";
 
 // howto
@@ -104,7 +102,7 @@ export const call = async (interaction: ChatInputCommandInteraction) => {
   let targetUser = interaction.options.getUser("user", false) ?? invokingUser;
 
   if (targetUser.bot) {
-    interaction.reply({
+    await interaction.reply({
       content: `${userMention(invokingUser.id)}, you cannot use this command on a bot.`,
       ephemeral: true,
     });
@@ -117,26 +115,27 @@ export const call = async (interaction: ChatInputCommandInteraction) => {
     let dmReply = commands.find((c) => c.name == subCommand);
 
     if (dmReply) {
-      postHowtoDm(dmReply, targetUser).then(
-        () =>
+
+      try {
+        await postHowtoDm(dmReply, targetUser);
+        await interaction.reply({
+              content: `${userMention(targetUser.id)} please check your DMs`,
+              ephemeral: selfTarget,
+            });
+      } catch (reason) {
           interaction.reply({
-            content: `${userMention(targetUser.id)} please check your DMs`,
+            content: `Cannot send a DM to user ${targetUser.username}`,
             ephemeral: selfTarget,
-          }),
-        (reason: DiscordAPIError) =>
-          interaction.reply({
-            content: `Cannot send a DM to user ${targetUser.username}: ${reason.message}`,
-            ephemeral: selfTarget,
-          })
-      );
+          });
+      }
     } else {
-      interaction.reply({
+      await interaction.reply({
         content: `Unknown command: \`${subCommand}\``,
         ephemeral: true,
       });
     }
   } else {
-    interaction.reply({
+    await interaction.reply({
       content: `${userMention(invokingUser.id)}, you are not privileged to use this command.`,
       ephemeral: true,
     });
@@ -144,28 +143,25 @@ export const call = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const postHowtoDm = async (command: HowtoCommand, targetUser: User) => {
-  const setUpReactions = (msg: Message<false>) => {
-    for (let reaction of command.reactions) {
-      msg.react(reaction.emoji);
+  let message = await targetUser.send(command.body);
+  for (let reaction of command.reactions) {
+    message.react(reaction.emoji);
+  }
+
+  // Do not set up a collector if there are no reactions
+  if (!command.reactions.length) return;
+
+  const collector = message.createReactionCollector({ filter: (_, reactor) => !reactor.bot });
+  collector.on("collect", (reaction, reactor) => {
+    if (reactor.bot || reactor.id != targetUser.id) return;
+
+    let emoji = reaction.emoji.name;
+    let commandName = command.reactions.find((r) => r.emoji == emoji)?.command;
+    let reactionCommand = commands.find((c) => c.name == commandName);
+    if (reactionCommand) {
+      postHowtoDm(reactionCommand, targetUser);
     }
-
-    // Do not set up a collector if there are no reactions
-    if (!command.reactions.length) return;
-
-    const collector = msg.createReactionCollector({ filter: (_, reactor) => !reactor.bot });
-    collector.on("collect", (reaction, reactor) => {
-      if (reactor.bot || reactor.id != targetUser.id) return;
-
-      let emoji = reaction.emoji.name;
-      let commandName = command.reactions.find((r) => r.emoji == emoji)?.command;
-      let reactionCommand = commands.find((c) => c.name == commandName);
-      if (reactionCommand) {
-        postHowtoDm(reactionCommand, targetUser);
-      }
-    });
-  };
-
-  return targetUser.send(command.body).then(setUpReactions);
+  });
 };
 
 type Reaction = {
