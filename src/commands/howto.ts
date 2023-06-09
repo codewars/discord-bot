@@ -7,6 +7,7 @@ import {
   User,
   GuildMember,
   APIInteractionGuildMember,
+  DiscordAPIError,
 } from "discord.js";
 
 // howto
@@ -116,11 +117,17 @@ export const call = async (interaction: ChatInputCommandInteraction) => {
     let dmReply = commands.find((c) => c.name == subCommand);
 
     if (dmReply) {
-      postHowtoDm(dmReply, targetUser).then(() =>
-        interaction.reply({
-          content: `${userMention(targetUser.id)} please check your DMs`,
-          ephemeral: selfTarget,
-        })
+      postHowtoDm(dmReply, targetUser).then(
+        () =>
+          interaction.reply({
+            content: `${userMention(targetUser.id)} please check your DMs`,
+            ephemeral: selfTarget,
+          }),
+        (reason: DiscordAPIError) =>
+          interaction.reply({
+            content: `Cannot send a DM to user ${targetUser.username}: ${reason.message}`,
+            ephemeral: selfTarget,
+          })
       );
     } else {
       interaction.reply({
@@ -158,10 +165,7 @@ const postHowtoDm = async (command: HowtoCommand, targetUser: User) => {
     });
   };
 
-  return targetUser
-    .createDM(true)
-    .then((dm) => dm.send(command.body))
-    .then(setUpReactions);
+  return targetUser.send(command.body).then(setUpReactions);
 };
 
 class Reaction {
