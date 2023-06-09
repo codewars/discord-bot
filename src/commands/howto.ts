@@ -168,26 +168,14 @@ const postHowtoDm = async (command: HowtoCommand, targetUser: User) => {
   return targetUser.send(command.body).then(setUpReactions);
 };
 
-class Reaction {
-  constructor(emoji: string, command: string) {
-    this.command = command;
-    this.emoji = emoji;
-  }
+type Reaction = {
+  emoji: string;
+  command: string;
+};
 
-  public readonly emoji: string;
-  public readonly command: string;
-}
-
-class HowtoCommand {
-  constructor(name: string, description: string, body: string, reactions: Reaction[]) {
-    this.name = name;
-    this.description = description;
-    this.body = body;
-    this.reactions = reactions;
-  }
-
-  public readonly name: string;
-  public readonly description: string;
-  public readonly body: string;
-  public readonly reactions: Reaction[];
-}
+type HowtoCommand = {
+  name: string;
+  description: string;
+  body: string;
+  reactions: Reaction[];
+};
