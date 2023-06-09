@@ -95,7 +95,7 @@ export const call = async (interaction: ChatInputCommandInteraction) => {
       } catch (reason) {
         await interactionReply(
           `${userMention(targetUser.id)} I couldn't DM you. See ${hideLinkEmbed(
-            `https://github.com/codewars/discord-bot/blob/main/text/introduce/${subCommand}.md`
+            `https://github.com/codewars/discord-bot/blob/main/text/howto/${subCommand}.md`
           )} instead.`,
           selfTarget
         );
