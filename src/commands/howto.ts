@@ -51,11 +51,14 @@ const hasSufficientPrivilege = (member: GuildMember | APIInteractionGuildMember 
 export const call = async (interaction: ChatInputCommandInteraction) => {
   let invokingUser = interaction.user;
   let targetUser = interaction.options.getUser("user", false) ?? invokingUser;
-
-  if (targetUser.id === invokingUser.id || hasSufficientPrivilege(interaction.member)) {
+  let selfTarget = targetUser.id === invokingUser.id;
+  if (selfTarget || hasSufficientPrivilege(interaction.member)) {
     let subCommand = interaction.options.getSubcommand();
     postHowtoDm(subCommand, targetUser).then(() =>
-      interaction.reply(`${userMention(targetUser.id)} please check your DMs`)
+      interaction.reply({
+        content: `${userMention(targetUser.id)} please check your DMs`,
+        ephemeral: selfTarget,
+      })
     );
   } else {
     interaction.reply({
