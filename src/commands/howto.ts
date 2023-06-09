@@ -51,6 +51,15 @@ const hasSufficientPrivilege = (member: GuildMember | APIInteractionGuildMember 
 export const call = async (interaction: ChatInputCommandInteraction) => {
   let invokingUser = interaction.user;
   let targetUser = interaction.options.getUser("user", false) ?? invokingUser;
+
+  if (targetUser.bot) {
+    interaction.reply({
+      content: `${userMention(invokingUser.id)}, you cannot use this command on a bot.`,
+      ephemeral: true,
+    });
+    return;
+  }
+
   let selfTarget = targetUser.id === invokingUser.id;
   if (selfTarget || hasSufficientPrivilege(interaction.member)) {
     let subCommand = interaction.options.getSubcommand();
