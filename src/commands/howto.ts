@@ -191,7 +191,9 @@ class PostKataLinkReplyBuilder implements IReplyBuilder {
     return {
       reactions: [],
       body: `# How to post links to kata
-When posting links to kata, please remember to not post links directly to kata trainer. Make sure that links posted by you do not end with \`/trainer\`, but lead to a kata description.`,
+- If possible, post links in a way they do not result in large embeds. Embeds are not very helpful, they do not carry too much useful information, and are quite annoying. To prevent Discord from adding embeds to your kata links, surround the links with angle brackets: \`<https://www.codewars.com/kata/50654ddff44f800200000004/python>\`.
+- Please remember to not post links directly to kata trainer. Make sure that links posted by you do not end with \`/trainer\`, but lead to a kata description.
+- Remember to also mention a title of the kata you are linking to.`,
     };
   }
 }
@@ -201,7 +203,8 @@ class CreateThreadReplyBuilder implements IReplyBuilder {
     return {
       reactions: [],
       body: `# How to create Discord threads
-Please use Discord threads to keep discussions focused, avoid spoilers, and to not introduce unnecessary noise into main channels.
+Please use Discord threads to keep discussions focused, avoid spoilers, and to not introduce unnecessary noise into main channels. Remember to give a meaningful title to your thread, for example _"hobovsky's thread - help to solve Multiply kata"_, or something similar.
+
 See Discord docs if you do not know how to create threads: <https://support.discord.com/hc/en-us/articles/4403205878423-Threads-FAQ#h_01GDXVYE6AZA3QRSB42F5AGGYG>`,
     };
   }
