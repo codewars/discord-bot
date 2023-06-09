@@ -34,6 +34,8 @@ Before working on this repo, you should already have [set up a bot account](http
   - `SEND_MESSAGES`: Enables your bot to send messages to channels
   - `MANAGE_MESSAGES`: Enables your bot to edit server messages and reactions
 
+You also need to enable the `MESSAGE CONTENT INTENT` for your bot.
+
 In order to mimic the Codewars Discord server in your development server, you may also wish to add appropriate roles such as `@admin`, `@mods` and `@power-users`, as well as common channels such as `#help-solve` and `#bot-playground`.
 
 ### Making Changes

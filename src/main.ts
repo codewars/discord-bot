@@ -14,6 +14,8 @@ const bot = new Client({
     // For `messageCreate`.
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMessageReactions,
+
+    GatewayIntentBits.DirectMessageReactions,
   ],
   allowedMentions: {
     // Parse roles and users mentions in the context. But not @everyone, nor @here.
