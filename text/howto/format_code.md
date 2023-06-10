@@ -4,9 +4,9 @@ Discord supports Markdown for code blocks and syntax highlighting of various pro
 If you want to post code and use syntax highlighting, you need to surround it with three backticks,
 with an optional name of your language:
 
-\`\`\`python
-def hello_world():
-  print("Hello, world!")
+\`\`\`python  
+def hello_world():  
+  print("Hello, world!")  
 \`\`\`
 
 When you do this, your code will be neatly formatted:
