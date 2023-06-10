@@ -3,6 +3,7 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
   userMention,
+  hyperlink,
   hideLinkEmbed,
   User,
   GuildMember,
@@ -93,9 +94,11 @@ export const call = async (interaction: ChatInputCommandInteraction) => {
         await postHowtoDm(dmReply, targetUser);
         await interactionReply(`${userMention(targetUser.id)} please check your DMs`, selfTarget);
       } catch (reason) {
+        let url = `https://github.com/codewars/discord-bot/blob/main/text/howto/${subCommand}.md`;
         await interactionReply(
-          `${userMention(targetUser.id)} I couldn't DM you. See ${hideLinkEmbed(
-            `https://github.com/codewars/discord-bot/blob/main/text/howto/${subCommand}.md`
+          `${userMention(targetUser.id)} I couldn't DM you. See ${hyperlink(
+            dmReply.description,
+            hideLinkEmbed(url)
           )} instead.`,
           selfTarget
         );
