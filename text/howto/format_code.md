@@ -17,5 +17,5 @@ def hello_world():
 ```
 
 You can replace `python` with any other language supported by Discord, or just omit it.
-
+ 
 More info in Discord docs: <https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline-#h_01GY0DAKGXDEHE263BCAYEGFJA>.
