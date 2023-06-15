@@ -119,15 +119,14 @@ const postHowtoDm = async (command: HowtoCommand, targetUser: User) => {
     return;
   }
   let message = await targetUser.send(body);
-  for (let reaction of command.reactions) {
-    message.react(reaction.emoji);
-  }
-
+  await Promise.all(command.reactions.map(r => message.react(r.emoji)));
+  
   // Do not set up a collector if there are no reactions
   if (!command.reactions.length) return;
 
-  const collector = message.createReactionCollector({ filter: (_, reactor) => !reactor.bot });
-  collector.on("collect", (reaction, reactor) => {
+  const collector = message.createReactionCollector({ time: 30*1000, filter: (_, reactor) => !reactor.bot });
+  collector
+  .on("collect", (reaction, reactor) => {
     if (reactor.bot || reactor.id != targetUser.id) return;
 
     let emoji = reaction.emoji.name;
@@ -135,6 +134,19 @@ const postHowtoDm = async (command: HowtoCommand, targetUser: User) => {
     let reactionCommand = commands.find((c) => c.name == commandName);
     if (reactionCommand) {
       postHowtoDm(reactionCommand, targetUser);
+    }
+  })
+  .once("end", async () => {
+    // Clean up info on reactions when the collector expires.
+    // Requires `MANAGE_MESSAGE` permission.
+    try {
+      await message.edit(message.content.replace(/react with .+? or /g, ""));
+
+      // On DMs, an attempt to remove another user's reaction crashes so
+      // the bot needs to take care to remove only its own reactions.
+      await Promise.all(message.reactions.cache.map(r => r.users.remove(message.author)));
+    } catch (e: any) {
+      console.log(`failed to remove reaction: ${e.message || "unknown error"}`);
     }
   });
 };
