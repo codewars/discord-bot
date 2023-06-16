@@ -146,7 +146,7 @@ const postHowtoDm = async (command: HowtoCommand, targetUser: User) => {
       // the bot needs to take care to remove only its own reactions.
       await Promise.all(message.reactions.cache.map(r => r.users.remove(message.author)));
     } catch (e: any) {
-      console.log(`failed to remove reaction: ${e.message || "unknown error"}`);
+      console.error(`failed to remove reaction: ${e.message || "unknown error"}`);
     }
   });
 };
