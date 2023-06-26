@@ -50,6 +50,10 @@ const LINKS: { [k: string]: { description: string; url: string } } = {
     description: "Editors | The Codewars Docs",
     url: "https://docs.codewars.com/references/kata-trainer/#editors",
   },
+  screenshot: {
+    description: "Screenshot Help",
+    "url": "https://screenshot.help/"
+  }
 };
 
 // link
