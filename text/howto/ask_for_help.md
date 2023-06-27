@@ -5,5 +5,5 @@
 - Explain what kata you are trying to solve. Post its title, and a link to its description (react with :link: `:link:` or use `/howto kata_link` for more info).
 - Explain what your problem is. Tests do not accept your answers? Solution is timing out? Is there some other problem?
 - Post **properly formatted** code of your solution. (react with :hash: `:hash:` or use `/howto format_code` for more info).
-- It's not OK to post screenshots of code: code snippets shared by you should be easy to copy from Discord, paste into Codewars trainer or local IDE, and run. It's OK to post screenshots. (react with :camera_with_flash: `:camera_with_flash:` or use `/howto screenshot` for more info)
+- Please recognize good practices and common etiquette when posting screenshots (react with :camera_with_flash: `:camera_with_flash:` or use `/howto screenshot` for more info).
 - If the code you posted contains spoilers for the discussed kata, please delete it after discussing your matter and getting all necessary help.
