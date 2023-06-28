@@ -97,8 +97,10 @@ export const call = async (interaction: ChatInputCommandInteraction) => {
 
     if (dmReply) {
       try {
-        await postHowtoDm(dmReply, targetUser);
-        await interactionReply(`${userMention(targetUser.id)} please check your DMs`, selfTarget);
+        await Promise.all([
+          postHowtoDm(dmReply, targetUser),
+          interactionReply(`${userMention(targetUser.id)} please check your DMs`, selfTarget)
+        ]);
       } catch (reason) {
         let url = `https://github.com/codewars/discord-bot/blob/main/text/howto/${subCommand}.md`;
         await interactionReply(
@@ -126,9 +128,11 @@ const postHowtoDm = async (command: HowtoCommand, targetUser: User) => {
   }
   let message = await targetUser.send(body);
   
-  // await 
-  Promise.all(command.reactions.map(r => message.react(r.emoji)));
-  
+  await Promise.all(command.reactions.map(r => message.react(r.emoji)));
+  //for (const r of command.reactions) {
+  //  await message.react(r.emoji);
+  //}
+
   // Do not set up a collector if there are no reactions
   if (!command.reactions.length) return;
 
