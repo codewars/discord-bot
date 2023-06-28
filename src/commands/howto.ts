@@ -129,9 +129,6 @@ const postHowtoDm = async (command: HowtoCommand, targetUser: User) => {
   let message = await targetUser.send(body);
   
   await Promise.all(command.reactions.map(r => message.react(r.emoji)));
-  //for (const r of command.reactions) {
-  //  await message.react(r.emoji);
-  //}
 
   // Do not set up a collector if there are no reactions
   if (!command.reactions.length) return;
