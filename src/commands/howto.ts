@@ -20,6 +20,7 @@ const commands: HowtoCommand[] = [
       { emoji: "🧵", command: "create_thread" },
       { emoji: "🔗", command: "post_link" },
       { emoji: "#️⃣", command: "format_code" },
+      { emoji: "📸", command: "screenshot" }
     ],
   },
   {
@@ -37,6 +38,11 @@ const commands: HowtoCommand[] = [
     description: "How to post links to kata",
     reactions: [],
   },
+  {
+    name: "screenshot",
+    description: "How to post screenshots",
+    reactions: [],
+  },  
 ];
 
 const howtoTexts: Map<string, string> = getTexts(
@@ -91,8 +97,10 @@ export const call = async (interaction: ChatInputCommandInteraction) => {
 
     if (dmReply) {
       try {
-        await postHowtoDm(dmReply, targetUser);
-        await interactionReply(`${userMention(targetUser.id)} please check your DMs`, selfTarget);
+        await Promise.all([
+          postHowtoDm(dmReply, targetUser),
+          interactionReply(`${userMention(targetUser.id)} please check your DMs`, selfTarget)
+        ]);
       } catch (reason) {
         let url = `https://github.com/codewars/discord-bot/blob/main/text/howto/${subCommand}.md`;
         await interactionReply(
@@ -119,8 +127,9 @@ const postHowtoDm = async (command: HowtoCommand, targetUser: User) => {
     return;
   }
   let message = await targetUser.send(body);
-  await Promise.all(command.reactions.map(r => message.react(r.emoji)));
   
+  await Promise.all(command.reactions.map(r => message.react(r.emoji)));
+
   // Do not set up a collector if there are no reactions
   if (!command.reactions.length) return;
 
