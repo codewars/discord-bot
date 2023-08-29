@@ -6,7 +6,7 @@
   "author": "kazk",
   "license": "MIT",
   "engines": {
-    "node": ">= 16.6.0",
+    "node": ">= 16.9.0",
     "npm": ">= 7"
   },
   "main": "./lib/main.js",
@@ -26,19 +26,19 @@
     "@types/node": "^16.11.22",
     "@types/ws": "^7.4.4",
     "husky": "^6.0.0",
-    "jest": "^27.0.4",
+    "jest": "^28.0.0",
     "plop": "^3.0.5",
     "prettier": "^2.3.0",
     "pretty-quick": "^3.1.1",
     "rimraf": "^3.0.2",
-    "ts-jest": "^27.0.3",
+    "ts-jest": "^28.0.0",
     "ts-node": "^10.0.0",
-    "typescript": "^4.7.4"
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.12",
     "common-tags": "^1.8.0",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.12.0",
     "dotenv": "^16.0.0",
     "fuzzysearch": "^1.0.3",
     "node-fetch": "^2.6.6",

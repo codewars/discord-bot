@@ -108,3 +108,13 @@ export const checkBotPlayground = (ephemeral: Boolean, interaction: CommandInter
   if (!ephemeral && (interaction.channel as TextChannel).name !== "bot-playground")
     throw new RequestError(REDIRECT);
 };
+
+/**
+ * Format the given timestamp as discord timestamp in full short date/time format or "unknown" if null.
+ * @param timestamp the unix timestamp in milliseconds
+ * @returns formatted date string
+ * @see https://discord.com/developers/docs/reference#message-formatting-timestamp-styles
+ */
+export const formatTimeStamp = (timestamp: number | null): string => {
+  return timestamp ? `<t:${Math.round(timestamp / 1000)}:f>` : "unknown";
+};
