@@ -11,6 +11,7 @@ import {
   strikethrough,
   underscore,
 } from "discord.js";
+import { checkBotPlayground } from "../common";
 
 const formats: { [k: string]: (s: string) => string } = {
   blockQuote,
@@ -40,6 +41,7 @@ export const data = async () =>
     .toJSON();
 
 export const call = async (interaction: ChatInputCommandInteraction) => {
+  checkBotPlayground(false, interaction);
   const input = interaction.options.getString("input", true);
   const format = interaction.options.getString("format");
   const msg = format && formats.hasOwnProperty(format) ? formats[format](input) : input;
