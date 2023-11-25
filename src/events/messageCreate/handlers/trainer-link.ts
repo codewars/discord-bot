@@ -9,7 +9,7 @@ export default async (message: Message) => {
   const links = trainerLinks.map((s) => "- <" + s.replace(/\/train\/[a-z]+$/, "") + ">").join("\n");
   const Q = "❓";
   const newMessage = await message.reply(stripIndents`
-    Please don't link directly to the trainer. Please change your link(s) to:
+    Please don't link directly to the trainer. Edit your comment and change the url(s) to:
     ${links}
     React with ${Q} within ${REACTION_SECS}s to get a DM with explanation.
   `);
